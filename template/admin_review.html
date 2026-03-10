@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block page_title %}Validation admin - IMMOPro{% endblock %}
+{% block content %}
+<section class="view">
+    <header class="view-head">
+        <div>
+            <h2>Dashboard Admin</h2>
+            <p>Validation et modération des annonces en attente.</p>
+        </div>
+        <span class="badge">2 en attente</span>
+    </header>
+
+    <div class="panel">
+        <table>
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Titre</th>
+                    <th>Propriétaire</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><img class="thumb" src="https://picsum.photos/seed/immo-3/120/80" alt="Annonce"></td>
+                    <td>Studio Yaoundé</td>
+                    <td>Jean N.</td>
+                    <td>
+                        <div class="btn-row">
+                            <button>Valider</button>
+                            <button class="btn-secondary">Refuser</button>
+                            <button class="btn-secondary">Supprimer</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -1,21 +1,307 @@
-
-
 {% extends 'base.html' %}
-{% block title %}Bienvenue | ApartLux{% endblock %}
+
+{% block title %}Accueil{% endblock %}
+
 {% block content %}
-<section class="max-w-7xl mx-auto px-4">
-<h1 class="text-4xl font-bold mb-6">Trouvez l'appartement de vos rêves</h1>
-<div class="grid md:grid-cols-3 gap-6">
-{% for apt in appartements %}
-<div class="bg-white dark:bg-slate-800 rounded-2xl shadow hover:scale-105 transition">
-<img src="{{ apt.photo.url }}" class="rounded-t-2xl h-48 w-full object-cover">
-<div class="p-4">
-<h2 class="font-semibold text-xl">{{ apt.titre }}</h2>
-<p class="text-sm text-slate-500">{{ apt.quartier }}</p>
-<p class="mt-2 font-bold text-rose-600">{{ apt.prix }} FCFA</p>
-</div>
-</div>
-{% endfor %}
-</div>
-{% endblock %}
-</section>
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Recherche d'appartements | Douala</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Animation au survol des liens */
+    .footer-link:hover {
+      color: #ffc107 !important;
+      /* Jaune Bootstrap warning */
+      padding-left: 5px;
+      transition: all 0.3s ease;
+    }
+
+    /* Style des icônes de contact et réseaux */
+    .footer-icon:hover {
+      color: #ffc107;
+      transform: translateY(-3px);
+      display: inline-block;
+      transition: all 0.3s ease;
+    }
+
+    hr {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Couleur personnalisée pour le logo et le bouton bleu */
+    .text-primary,
+    .btn-primary {
+      background-color: #007bff !important;
+      border-color: #007bff !important;
+    }
+
+    /* Couleur personnalisée pour le bouton vert */
+    .btn-success {
+      background-color: #198754 !important;
+      border-color: #198754 !important;
+    }
+
+    /* Style des liens au survol */
+    .nav-link {
+      font-weight: 500;
+      color: #333 !important;
+      transition: color 0.3s;
+    }
+
+    .nav-link:hover {
+      color: #007bff !important;
+    }
+
+    /* Arrondi parfait pour les boutons */
+    .btn {
+      font-weight: 500;
+      padding-top: 8px;
+      padding-bottom: 8px;
+    }
+
+    .hero-banner {
+      min-height: 80vh;
+      /* Hauteur de la section */
+      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        url('images.jpg') no-repeat center center;
+      background-size: cover;
+    }
+
+    /* Style de la barre de recherche */
+    .search-wrapper {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .search-wrapper .form-control,
+    .search-wrapper .form-select,
+    .search-wrapper .input-group-text {
+      border: 1px solid #e0e0e0;
+      height: 55px;
+      /* Plus grand pour le confort mobile */
+    }
+
+    .search-wrapper .form-control:focus,
+    .search-wrapper .form-select:focus {
+      box-shadow: none;
+      border-color: #007bff;
+    }
+
+    /* Responsive : Empiler sur mobile */
+    @media (max-width: 768px) {
+      .hero-banner {
+        min-height: 60vh;
+      }
+
+      .display-4 {
+        font-size: 1.8rem;
+      }
+    }
+  </style>
+</head>
+
+<body class="" style="background-color: #fffefe;">
+  <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-3">
+    <div class="container">
+      <a class="navbar-brand fw-bold text-primary" href="#">
+        🏠 AppartDouala
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center">
+          <li class="nav-item"><a class="nav-link px-3" href="#">Accueil</a></li>
+          <li class="nav-item"><a class="nav-link px-3" href="#">Rechercher</a></li>
+          <li class="nav-item"><a class="nav-link px-3" href="#">Publier</a></li>
+          <li class="nav-item"><a class="nav-link px-3" href="#">Comment ça marche</a></li>
+
+          <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+            <a class="btn btn-success rounded-pill px-4 me-2" href="{%  url 'login'  %}">Se connecter</a>
+          </li>
+          <li class="nav-item mt-2 mt-lg-0">
+            <a class="btn btn-primary rounded-pill px-4" href="{% url 'register' %}">S'inscrire</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- HERO SECTION -->
+  <section class="py-5">
+    <div class="container text-center">
+      <h1 class="fw-bold">Trouvez facilement votre logement à Douala</h1>
+      <p class="text-muted " style="font-style: italic;">
+        Chambres, studios et appartements disponibles selon votre budget et quartier
+      </p>
+    </div>
+    <section class="hero-banner d-flex align-items-center">
+      <div class="container text-center">
+        <div class="mb-5 text-white">
+          <h1 class="display-4 fw-bold">Trouvez facilement votre logement à Douala</h1>
+          <p class="lead">Chambres, studios et appartements disponibles selon votre budget et quartier</p>
+        </div>
+
+        <div class="search-wrapper shadow-lg bg-white p-3 rounded-4">
+          <form class="row g-2 align-items-center">
+            <div class="col-md-4">
+              <div class="input-group">
+                <span class="input-group-text bg-transparent border-end-0"><i class="bi bi-geo-alt"></i></span>
+                <input type="text" class="form-control border-start-0" placeholder="Quartier (Akwa, Bonamoussadi...)">
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <select class="form-select">
+                <option selected disabled>Type de logement</option>
+                <option>Chambre</option>
+                <option>Studio</option>
+                <option>Appartement</option>
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <div class="input-group">
+                <input type="number" class="form-control" placeholder="Prix max (FCFA)">
+                <span class="input-group-text">FCFA</span>
+              </div>
+            </div>
+
+            <div class="col-md-2 d-grid">
+              <button type="submit" class="btn btn-primary btn-lg rounded-3">
+                🔍 Rechercher
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+
+
+    <!-- LISTE DES APPARTEMENTS -->
+    <section class="container-fluid px-4 my-5">
+      <h3 class="fw-bold mb-4"
+        style="color: #1A2B4C; letter-spacing: -0.5px; border-left: 5px solid #27AE60; padding-left: 15px;">Appartements
+        disponibles</h3>
+      <div class=" row row-cols-1 row-cols-md-3 row-cols-lg-5 g-3">
+        {% for appartement in appartements %}
+        <div class="col">
+          <div class="card h-100 shadow-sm border-0">
+            {% if appartement.photo %}
+            <img src="{{ appartement.photo.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+            {% endif %}
+
+            <div class="card-body">
+              <h5 class="card-title fw-bold" style="color: #1A2B4C; font-weight: 700 !important;">{{ appartement.titre }}
+
+              </h5>
+              <p class="card-text mb-1">
+                <span class="text-danger">📍</span> {{ appartement.quartier }}
+              </p>
+              <p class="text-muted mb-2">
+                <span class="text-warning" style="color: #6C757D !important;">🏠</span>
+                {{ appartement.type_logement|title}}
+              </p>
+              <h6 class="text-success fw-bold" style="color:#27AE60 !important;">{{ appartement.prix }} FCFA / mois</h6>
+              <p class="card-text  text-secondary"
+                style="font-size: 15px;font-style: italic; color: #6C757D !important;">
+                {{ appartement.description|truncatewords:15 }}
+              </p>
+            </div>
+
+            <div class="card-footer bg-white border-0 pb-2">
+              <a href="{% url 'login' %}" class="btn btn-link p-0 text-decoration-none fw-bold">
+                📞 Contacter le propriétaire
+              </a>
+            </div>
+
+          </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-muted">
+          Aucun appartement trouvé.
+        </p>
+        {% endfor %}
+
+      </div>
+    </section>
+
+
+
+    <hr class="border-light">
+
+    <!-- Bas du footer -->
+    <footer class="bg-dark text-white pt-5 pb-4">
+      <div class="container text-center text-md-start">
+        <div class="row text-center text-md-start">
+
+          <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
+            <h5 class="text-uppercase mb-4 font-weight-bold text-warning">LogementDouala</h5>
+            <p>Trouvez facilement des chambres, studios et appartements à Douala selon votre budget et votre quartier.
+            </p>
+          </div>
+
+          <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
+            <h5 class="text-uppercase mb-4 font-weight-bold text-warning">Liens rapides</h5>
+            <p><a href="#" class="text-white text-decoration-none footer-link">Accueil</a></p>
+            <p><a href="#" class="text-white text-decoration-none footer-link">Rechercher</a></p>
+            <p><a href="#" class="text-white text-decoration-none footer-link">Publier</a></p>
+            <p><a href="#" class="text-white text-decoration-none footer-link">Comment ça marche</a></p>
+          </div>
+
+          <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mt-3">
+            <h5 class="text-uppercase mb-4 font-weight-bold text-warning">Nos services</h5>
+            <p><a href="#" class="text-white text-decoration-none footer-link">Location chambre</a></p>
+            <p><a href="#" class="text-white text-decoration-none footer-link">Location studio</a></p>
+            <p><a href="#" class="text-white text-decoration-none footer-link">Location appartement</a></p>
+            <p><a href="#" class="text-white text-decoration-none footer-link">Conseils logement</a></p>
+          </div>
+
+          <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
+            <h5 class="text-uppercase mb-4 font-weight-bold text-warning">Contact</h5>
+            <p><i class="bi bi-geo-alt-fill me-2"></i> Douala, Cameroun</p>
+            <p><i class="bi bi-telephone-fill me-2"></i> +237 6 88 85 32 09</p>
+            <p><i class="bi bi-envelope-fill me-2"></i> contact@logementdouala.com</p>
+          </div>
+        </div>
+
+        <hr class="mb-4">
+
+        <div class="row align-items-center">
+          <div class="col-md-7 col-lg-8">
+            <p>© 2026 <strong>LogementDouala</strong>. Tous droits réservés.</p>
+          </div>
+          <div class="col-md-5 col-lg-4">
+            <div class="text-center text-md-end">
+              <ul class="list-unstyled list-inline">
+                <li class="list-inline-item">
+                  <a href="#" class="btn-floating btn-sm text-white" style="font-size: 23px;"><i
+                      class="bi bi-facebook footer-icon"></i></a>
+                </li>
+                <li class="list-inline-item">
+                  <a href="#" class="btn-floating btn-sm text-white" style="font-size: 23px;"><i
+                      class="bi bi-whatsapp footer-icon"></i></a>
+                </li>
+                <li class="list-inline-item">
+                  <a href="#" class="btn-floating btn-sm text-white" style="font-size: 23px;"><i
+                      class="bi bi-instagram footer-icon"></i></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    {% endblock %}
+</body>
+
+</html>

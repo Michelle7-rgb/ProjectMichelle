@@ -36,7 +36,7 @@ def register(request):
             user = form.save()  
             auth_login(request, user)  
             messages.success(request, "Compte créé avec succès !")
-            return redirect('accueil')
+            return redirect('login')
     else:
         form = RegisterForm()  
 
@@ -48,3 +48,16 @@ def logout_view(request):
     return redirect('accueil')
 
 
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def profil(request):
+    
+    utilisateur = request.user
+
+    context = {
+        "utilisateur": utilisateur
+    }
+
+    return render(request, "tenant_profile.html", context)

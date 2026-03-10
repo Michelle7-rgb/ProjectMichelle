@@ -8,8 +8,8 @@ from django.contrib.auth.decorators import login_required
 #accueil
 def accueil(request):
     # Si l'utilisateur est connecté, redirige vers le feed
-    if request.user.is_authenticated:
-        return redirect('feed')
+    # if request.user.is_authenticated:
+    #     return redirect('feed')
 
     # Sinon, affiche la page d'accueil publique
     appartements = Appartement.objects.filter(disponible=True)
@@ -138,3 +138,73 @@ def feed(request):
     }
 
     return render(request, 'feed.html', context)
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
+from .models import Appartement, Favoris
+
+User = get_user_model()
+
+@login_required
+def dashboard_locataire(request):
+    # Utilisation du bon modèle de favoris et du bon champ de date
+    mes_favoris = Favoris.objects.filter(utilisateur=request.user)
+    return render(request, 'dashboard_locataire.html', {'favoris': mes_favoris})
+
+def admin_dashboard(request):
+    return render(request, 'admin_dashboard.html')
+
+def message(request):
+    return render(request, 'message.html')
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Appartement 
+
+@login_required
+def dashboard_proprietaire(request):
+    # On récupère seulement les appartements de la personne connectée
+    mes_appartements = Appartement.objects.filter(
+        proprietaire=request.user
+    ).order_by('-date_publication')
+    
+    return render(request, 'dashboard_proprietaire.html', {
+        'appartements': mes_appartements
+    })
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+
+
+from appartement.models import Appartement
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+
+
+@login_required
+def dashboard_admin(request):
+    
+    # Compter les éléments importants
+    total_users = User.objects.count()
+    total_annonces = Appartement.objects.count()
+    
+
+    # Dernières annonces ajoutées
+    Appartements_recentes = Appartement.objects.all().order_by('-date_publication')[:5]
+
+    context = {
+        'total_users': total_users,
+        'total_Appartement': Appartement,
+        'Appartement_recentes': Appartement,
+    }
+
+    return render(request, 'admin_review.html', context)
+
+def owner_listings(request):
+    return render(request, "owner_listings.html",{"active_view": "owner-listings"})

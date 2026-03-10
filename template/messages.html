@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block page_title %}Messagerie - IMMOPro{% endblock %}
+{% block content %}
+<section class="view">
+    <header class="view-head">
+        <div>
+            <h2>Messagerie</h2>
+            <p>Échangez rapidement entre propriétaires, locataires et administration.</p>
+        </div>
+        <span class="badge">2 conversations actives</span>
+    </header>
+
+    <div class="messages-container">
+        <aside class="conversations">
+            <p class="conversations-head">Conversations</p>
+            <div class="conversation-item active">Jean (Propriétaire)</div>
+            <div class="conversation-item">Marie (Locataire)</div>
+            <div class="conversation-item">Support Admin</div>
+        </aside>
+        <section class="chat">
+            <div class="chat-head">Discussion avec Jean (Propriétaire)</div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message received">Bonjour, le bien est-il toujours disponible ?</div>
+            </div>
+            <form class="chat-input" id="chatForm">
+                <input type="text" id="msgInput" placeholder="Écrire un message...">
+                <button type="submit">Envoyer</button>
+            </form>
+        </section>
+    </div>
+</section>
+{% endblock %}

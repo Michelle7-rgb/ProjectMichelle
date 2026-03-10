@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block page_title %}Favoris - IMMOPro{% endblock %}
+{% block content %}
+<section class="view">
+    <header class="view-head">
+        <div>
+            <h2>Mes favoris</h2>
+            <p>Retrouvez les biens sauvegardés et suivez leur disponibilité.</p>
+        </div>
+        <span class="badge">5 biens</span>
+    </header>
+
+    <div class="panel">
+        <table>
+            <thead>
+                <tr>
+                    <th>Bien</th>
+                    <th>Zone</th>
+                    <th>Prix</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Loft Akwa</td>
+                    <td>Douala</td>
+                    <td>220 000 FCFA</td>
+                    <td><span class="status success">Disponible</span></td>
+                </tr>
+                <tr>
+                    <td>Studio Melen</td>
+                    <td>Yaoundé</td>
+                    <td>95 000 FCFA</td>
+                    <td><span class="status warning">Très demandé</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

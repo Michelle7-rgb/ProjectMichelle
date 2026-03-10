@@ -1,33 +1,32 @@
-{% extends 'base.html' %}
-{% block title %}{{ appartement.titre }} | ApartLux{% endblock %}
 
-{% block content %}
-<div class="max-w-4xl mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow mt-6">
-    <h1 class="text-3xl font-bold mb-4">{{ appartement.titre }}</h1>
-    <p class="text-slate-500 mb-2">Quartier : {{ appartement.quartier }}</p>
-    <p class="text-rose-600 font-bold mb-4">{{ appartement.prix }} FCFA</p>
-    <p class="mb-4">{{ appartement.description }}</p>
-    <p class="text-sm text-slate-400">Contact propriétaire : {{ appartement.contact_proprietaire }}</p>
+
+ <a href="{% url 'accueil' %}">accueil</a>
+<div class="">
+    <h1 class="">titre: {{ appartement.titre }}</h1>
+    <p class="">Quartier : {{ appartement.quartier }}</p>
+    <p class="">{{ appartement.prix }} FCFA</p>
+    <p class="">{{ appartement.description }}</p>
+    <p class="">Contact propriétaire : {{ appartement.contact_proprietaire }}</p>
 
     {% if appartement.images.all %}
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+    <div class="">
         {% for image in appartement.images.all %}
-        <img src="{{ image.image.url }}" class="rounded-lg object-cover h-48 w-full">
+        <img src="{{ image.image.url }}" class="">
         {% endfor %}
     </div>
     {% endif %}
 
     {% if user.is_authenticated %}
         {% if user.role == 'ADMIN' or user == appartement.proprietaire %}
-        <div class="mt-6 flex gap-3">
-            <a href="{% url 'modifier_appartement' appartement.id %}" class="px-4 py-2 rounded bg-yellow-500 text-white hover:bg-yellow-600 transition">✏️ Modifier</a>
+        <div class="">
+            <a href="{% url 'modifier_appartement' appartement.id %}" class="">✏️ Modifier</a>
             
             <form method="post" action="{% url 'supprimer_appartement' appartement.id %}" onsubmit="return confirm('Supprimer cet appartement ?');">
                 {% csrf_token %}
-                <button type="submit" class="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 transition">🗑 Supprimer</button>
+                <button type="submit" class="">🗑 Supprimer</button>
             </form>
         </div>
         {% endif %}
     {% endif %}
 </div>
-{% endblock %}
+

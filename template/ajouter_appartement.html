@@ -1,97 +1,86 @@
-{% extends "base.html" %}
-{% block title %}Publier un appartement{% endblock %}
 
-{% block content %}
-<div class="max-w-4xl mx-auto px-4 py-10">
+      
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Publier une annonce</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn-publish { background-color: #157347; color: white; border: none; padding: 10px 30px; }
+        .btn-publish:hover { background-color: #115c39; color: white; }
+    </style>
+</head>
+<body>
 
-  <!-- Header -->
-  <div class="mb-8">
-    <h1 class="text-3xl font-bold text-slate-800 dark:text-slate-100">
-      Publier un appartement
-    </h1>
-    <p class="text-slate-500 dark:text-slate-400">
-      Renseignez les informations principales du logement
-    </p>
-  </div>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            
+            <div class="text-center mb-4">
+                <h1 class="fw-bold" style="color: #4b0082;">Publier un appartement</h1>
+                <p class="text-muted">Renseignez les informations principales du logement</p>
+            </div>
 
-  <!-- Form -->
-  <form method="post" enctype="multipart/form-data"
-        class="bg-white dark:bg-slate-800 shadow-xl rounded-2xl p-8 space-y-6">
-    {% csrf_token %}
+            <div class="card p-4">
+                <form>
+                    <div class="mb-3">
+                        <label for="titre" class="form-label fw-semibold">Titre de l'annonce</label>
+                        <input type="text" class="form-control" id="titre" placeholder="Ex: Studio moderne à Akwa">
+                    </div>
 
-    <!-- Titre -->
-    <div>
-      <label class="block font-medium mb-1">Titre de l'annonce</label>
-      <input type="text" name="titre" required
-             class="w-full rounded-xl border px-4 py-2 focus:ring-2 focus:ring-rose-500
-                    bg-slate-50 dark:bg-slate-700">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="type" class="form-label fw-semibold">Type de logement</label>
+                            <select class="form-select" id="type">
+                                <option selected>Choisir...</option>
+                                <option value="1">Appartement</option>
+                                <option value="2">Studio</option>
+                                <option value="3">Chambre</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="quartier" class="form-label fw-semibold">Quartier</label>
+                            <input type="text" class="form-control" id="quartier" placeholder="Ex: Bonapriso">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="prix" class="form-label fw-semibold">Prix (FCFA)</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="prix" placeholder="Montant mensuel">
+                            <span class="input-group-text">FCFA</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-label fw-semibold">Description</label>
+                        <textarea class="form-control" id="description" rows="4" placeholder="Décrivez les atouts du logement..."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="contact" class="form-label fw-semibold">Contact propriétaire</label>
+                        <input type="tel" class="form-control" id="contact" placeholder="Numéro de téléphone">
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="photos" class="form-label fw-semibold">Photos du logement</label>
+                        <input class="form-control" type="file" id="photos" multiple>
+                        <div class="form-text">Ajoutez plusieurs photos (la première sera la principale).</div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-publish btn-lg fw-bold">Publier l'annonce</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
     </div>
-
-    <!-- Type & Quartier -->
-    <div class="grid md:grid-cols-2 gap-6">
-      <div>
-        <label class="block font-medium mb-1">Type de logement</label>
-        <select name="type_logement" required
-                class="w-full rounded-xl border px-4 py-2 bg-slate-50 dark:bg-slate-700">
-          <option value="">Choisir</option>
-          <option value="Studio">Studio</option>
-          <option value="T2">T2</option>
-          <option value="T3">T3</option>
-          <option value="Villa">Villa</option>
-        </select>
-      </div>
-
-      <div>
-        <label class="block font-medium mb-1">Quartier</label>
-        <input type="text" name="quartier" required
-               class="w-full rounded-xl border px-4 py-2 bg-slate-50 dark:bg-slate-700">
-      </div>
-    </div>
-
-    <!-- Prix -->
-    <div>
-      <label class="block font-medium mb-1">Prix (FCFA)</label>
-      <input type="number" name="prix" required
-             class="w-full rounded-xl border px-4 py-2 bg-slate-50 dark:bg-slate-700">
-    </div>
-
-    <!-- Description -->
-    <div>
-      <label class="block font-medium mb-1">Description</label>
-      <textarea name="description" rows="4"
-                class="w-full rounded-xl border px-4 py-2 bg-slate-50 dark:bg-slate-700"></textarea>
-    </div>
-
-    <!-- Contact -->
-    <div>
-      <label class="block font-medium mb-1">Contact propriétaire</label>
-      <input type="text" name="contact" required
-             class="w-full rounded-xl border px-4 py-2 bg-slate-50 dark:bg-slate-700">
-    </div>
-
-    <!-- Images -->
-    <div>
-      <label class="block font-medium mb-2">Photos du logement</label>
-
-      <!-- UX recommandée -->
-      <div class="border-2 border-dashed rounded-xl p-6 text-center
-                  hover:border-rose-500 transition">
-        <input type="file" name="images" multiple
-               class="w-full cursor-pointer">
-        <p class="text-sm text-slate-500 mt-2">
-          Ajoutez plusieurs photos (la première sera la principale)
-        </p>
-      </div>
-    </div>
-
-    <!-- Submit -->
-    <div class="pt-6">
-      <button type="submit"
-              class="w-full md:w-auto px-8 py-3 rounded-xl bg-rose-600
-                     hover:bg-rose-700 text-white font-semibold shadow-lg">
-        Publier l'annonce
-      </button>
-    </div>
-  </form>
 </div>
-{% endblock %}
+
+</body>
+</html>

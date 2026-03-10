@@ -10,6 +10,8 @@ class Appartement(models.Model):
         ('T2', 'T2'),
         ('T3', 'T3'),
         ('Villa', 'Villa'),
+         ('Appartement', 'Appartement'),
+         ('Duplex', 'Duplex'),
     ]
 
     titre = models.CharField(max_length=50)
@@ -24,7 +26,7 @@ class Appartement(models.Model):
     photo = models.ImageField(
         upload_to='appartements/',
         blank=True,
-        null=True
+        null=True,
     )
 
     proprietaire = models.ForeignKey(
@@ -36,6 +38,7 @@ class Appartement(models.Model):
     contact_proprietaire = models.CharField(max_length=100)
     disponible = models.BooleanField(default=True)
     date_publication = models.DateTimeField(auto_now_add=True)
+    
 
     def main_image(self):
      return self.images.filter(is_main=True).first()
@@ -56,3 +59,20 @@ class AppartementImage(models.Model):
     def __str__(self):
         return f"Image - {self.appartement.titre}"
 
+
+
+class Favoris(models.Model): # Utilisez le singulier 'Favori' pour éviter les confusions
+    utilisateur = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='mes_coups_de_coeur' # Nom unique pour éviter le clash
+    )
+    appartement = models.ForeignKey(
+        'Appartement', 
+        on_delete=models.CASCADE,
+        related_name='favorisé_par' # Nom unique ici aussi
+    )
+    date_ajout = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('utilisateur', 'appartement')

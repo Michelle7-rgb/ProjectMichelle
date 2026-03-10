@@ -1,20 +1,16 @@
-{% extends 'base.html' %}
-{% block title %}Modifier {{ appartement.titre }} | ApartLux{% endblock %}
 
-{% block content %}
-<div class="max-w-2xl mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow mt-6">
-    <h1 class="text-2xl font-bold mb-4">Modifier l'appartement</h1>
+<div class="">
+    <h1 class="">Modifier l'appartement</h1>
 
-    <form method="post" enctype="multipart/form-data" class="space-y-4">
+    <form method="post" class="">
         {% csrf_token %}
-        <input type="text" name="titre" value="{{ appartement.titre }}" placeholder="Titre" class="w-full p-2 rounded border border-gray-300">
-        <input type="text" name="type_logement" value="{{ appartement.type_logement }}" placeholder="Type de logement" class="w-full p-2 rounded border border-gray-300">
-        <input type="text" name="quartier" value="{{ appartement.quartier }}" placeholder="Quartier" class="w-full p-2 rounded border border-gray-300">
-        <input type="number" name="prix" value="{{ appartement.prix }}" placeholder="Prix (FCFA)" class="w-full p-2 rounded border border-gray-300">
-        <textarea name="description" placeholder="Description" class="w-full p-2 rounded border border-gray-300">{{ appartement.description }}</textarea>
-        <input type="text" name="contact" value="{{ appartement.contact_proprietaire }}" placeholder="Contact propriétaire" class="w-full p-2 rounded border border-gray-300">
-        <input type="file" name="images" multiple class="w-full p-2 rounded border border-gray-300">
-        <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-xl">Modifier</button>
+        <input type="text" name="titre" value="{{ appartement.titre }}" placeholder="Titre" class="">
+        <input type="text" name="type_logement" value="{{ appartement.type_logement }}" placeholder="Type de logement" class="">
+        <input type="text" name="quartier" value="{{ appartement.quartier }}" placeholder="Quartier" class="">
+        <input type="number" name="prix" value="{{ appartement.prix }}" placeholder="Prix (FCFA)" class="">
+        <textarea name="description" placeholder="Description" class="">{{ appartement.description }}</textarea>
+        <input type="text" name="contact" value="{{ appartement.contact_proprietaire }}" placeholder="Contact propriétaire" class="">
+        <input type="file" name="images" multiple class="">
+        <button type="submit" class="">Modifier</button>
     </form>
 </div>
-{% endblock %}

@@ -39,6 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'appartement',
+    'message',
+    'favoris',
+    'crispy_forms',
+    'crispy_bootstrap5',
 ]
 
 MIDDLEWARE = [
@@ -122,3 +126,18 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 AUTH_USER_MODEL = 'user.User'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+# Dans settings.py
+# logement/settings.py
+
+# LOGIN_URL = 'login'  # Ou le nom que tu as donné à ta vue de connexion
+# LOGIN_REDIRECT_URL = 'dashboard_proprietaire' # Où aller après s'être connecté
+
+# Assure-toi que ces noms correspondent exactement à tes chemins d'URL
+LOGIN_REDIRECT_URL = '/app/dashboard/' 
+LOGIN_URL = '/account/login/'
+
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / "static",]

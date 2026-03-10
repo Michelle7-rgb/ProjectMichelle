@@ -1,104 +1,22 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="fr" class="">
+<html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>{% block title %}ApartLux{% endblock %}</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config = {
-  darkMode: 'class',
-}
-</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block page_title %}Plateforme Immobilière{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'app.css' %}">
 </head>
-
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-300">
-
-
-<nav class="bg-white/80 dark:bg-slate-800/80 backdrop-blur shadow-sm fixed w-full z-50">
-  <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-
-    
-    <div class="text-2xl font-bold text-rose-600">
-      ApartLux
-    </div>
-
-    
-    <div class="flex items-center gap-4">
-
-      <a href="{% url 'accueil' %}" class="hover:text-rose-500 transition">
-        Accueil
-      </a>
-
-      {% if user.is_authenticated %}
-
-       
-        <span class="text-sm font-medium">
-          {{ user.username }}
-        </span>
-
-       
-        <span class="text-xs px-2 py-1 rounded-full
-        {% if user.role == 'PROPRIETAIRE' %}
-          bg-emerald-200 text-emerald-800
-        {% elif user.role == 'CLIENT' %}
-          bg-blue-200 text-blue-800
-        {% else %}
-          bg-slate-200 text-slate-700
-        {% endif %}
-        dark:bg-slate-700 dark:text-slate-200">
-          {{ user.get_role_display }}
-        </span>
-
-        
-        <a href="{% url 'logout' %}"
-           class="px-4 py-1 rounded-lg bg-rose-600 text-white hover:bg-rose-700 transition">
-          Logout
-        </a>
-
-      {% else %}
-
-        
-        <a href="{% url 'login' %}" class="hover:text-rose-500 transition">
-          Login
-        </a>
-        <a href="{% url 'register' %}" class="hover:text-rose-500 transition">
-          Register
-        </a>
-
-      {% endif %}
-
-     
-      <button onclick="toggleTheme()"
-              class="px-3 py-1 rounded-lg bg-slate-200 dark:bg-slate-700 transition">
-        🌙 / ☀️
-      </button>
-
-    </div>
-  </div>
-</nav>
-
-
-<div class="pt-24 max-w-7xl mx-auto px-4">
-  {% block content %}{% endblock %}
+<body>
+<div class="app">
+    {% include 'sidebar.html' %}
+    <main class="main" id="mainContent">
+        <div class="content-shell">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
 </div>
-
-
-<script>
-function toggleTheme() {
-  document.documentElement.classList.toggle('dark');
-  localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-}
-
-if (localStorage.theme === 'dark') {
-  document.documentElement.classList.add('dark');
-} else if (localStorage.theme === 'light') {
-  document.documentElement.classList.remove('dark');
-} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-  document.documentElement.classList.add('dark');
-}
-</script>
-
+<script src="{% static 'app.js' %}"></script>
 </body>
 </html>

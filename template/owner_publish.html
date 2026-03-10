@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block page_title %}Publier - IMMOPro{% endblock %}
+{% block content %}
+<section class="view">
+    <header class="view-head">
+        <div>
+            <h2>Publier une annonce</h2>
+            <p>Créez une fiche complète pour augmenter votre visibilité.</p>
+        </div>
+        <span class="badge">Brouillon</span>
+    </header>
+
+    <div class="panel">
+        <div class="panel-body">
+            <form class="form-grid">
+                <div class="field">
+                    <label>Titre</label>
+                    <input type="text" placeholder="Appartement moderne à Akwa">
+                </div>
+                <div class="field">
+                    <label>Type de bien</label>
+                    <select>
+                        <option>Appartement</option>
+                        <option>Studio</option>
+                        <option>Maison</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Prix mensuel (FCFA)</label>
+                    <input type="number" placeholder="150000">
+                </div>
+                <div class="field">
+                    <label>Localisation</label>
+                    <input type="text" placeholder="Douala, Bonamoussadi">
+                </div>
+                <div class="field" style="grid-column: 1 / -1;">
+                    <label>Description</label>
+                    <textarea placeholder="Décrivez les points forts du bien..."></textarea>
+                </div>
+            </form>
+            <div class="btn-row" style="margin-top: 12px;">
+                <button type="button">Publier</button>
+                <button type="button" class="btn-secondary">Enregistrer le brouillon</button>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
