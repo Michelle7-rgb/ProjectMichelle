@@ -1,16 +1,56 @@
+{% extends 'base.html' %}
+{% block page_title %}Modifier l'appartement - IMMOPro{% endblock %}
+{% block content %}
+<section class="view">
+    <header class="view-head">
+        <div>
+            <h2>Modifier l'appartement</h2>
+            <p>Mettez à jour les informations principales de votre annonce.</p>
+        </div>
+        <span class="badge">Édition</span>
+    </header>
 
-<div class="">
-    <h1 class="">Modifier l'appartement</h1>
+    <div class="panel">
+        <div class="panel-body">
+            <form method="post" class="form-grid">
+                {% csrf_token %}
 
-    <form method="post" class="">
-        {% csrf_token %}
-        <input type="text" name="titre" value="{{ appartement.titre }}" placeholder="Titre" class="">
-        <input type="text" name="type_logement" value="{{ appartement.type_logement }}" placeholder="Type de logement" class="">
-        <input type="text" name="quartier" value="{{ appartement.quartier }}" placeholder="Quartier" class="">
-        <input type="number" name="prix" value="{{ appartement.prix }}" placeholder="Prix (FCFA)" class="">
-        <textarea name="description" placeholder="Description" class="">{{ appartement.description }}</textarea>
-        <input type="text" name="contact" value="{{ appartement.contact_proprietaire }}" placeholder="Contact propriétaire" class="">
-        <input type="file" name="images" multiple class="">
-        <button type="submit" class="">Modifier</button>
-    </form>
-</div>
+                <div class="field" style="grid-column: 1 / -1;">
+                    <label for="titre">Titre</label>
+                    <input id="titre" type="text" name="titre" value="{{ appartement.titre }}" placeholder="Titre" required>
+                </div>
+
+                <div class="field">
+                    <label>Type de logement</label>
+                    <input type="text" value="{{ appartement.type_logement }}" disabled>
+                </div>
+
+                <div class="field">
+                    <label>Quartier</label>
+                    <input type="text" value="{{ appartement.quartier }}" disabled>
+                </div>
+
+                <div class="field">
+                    <label for="prix">Prix (FCFA)</label>
+                    <input id="prix" type="number" name="prix" value="{{ appartement.prix }}" placeholder="Prix (FCFA)" required>
+                </div>
+
+                <div class="field">
+                    <label>Contact propriétaire</label>
+                    <input type="text" value="{{ appartement.contact_proprietaire }}" disabled>
+                </div>
+
+                <div class="field" style="grid-column: 1 / -1;">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" placeholder="Description" required>{{ appartement.description }}</textarea>
+                </div>
+
+                <div class="btn-row" style="grid-column: 1 / -1; margin-top: 6px;">
+                    <button type="submit">Enregistrer les modifications</button>
+                    <a href="{% url 'appartement_detail' appartement.id %}" class="btn-secondary" style="padding:8px 12px; border-radius:10px; text-decoration:none;">Annuler</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

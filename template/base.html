@@ -9,14 +9,16 @@
     <link rel="stylesheet" href="{% static 'app.css' %}">
 </head>
 <body>
+<button id="mobileMenuBtn" class="mobile-menu-btn" type="button" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
 <div class="app">
     {% include 'sidebar.html' %}
-    <main class="main" id="mainContent">
-        <div class="content-shell">
+    <main class="main">
+        <div class="content-shell" id="mainContent">
             {% block content %}{% endblock %}
         </div>
     </main>
 </div>
+<div id="sidebarBackdrop" class="sidebar-backdrop" aria-hidden="true"></div>
 <script src="{% static 'app.js' %}"></script>
 </body>
 </html>

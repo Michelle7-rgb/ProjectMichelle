@@ -1,32 +1,88 @@
-
-
- <a href="{% url 'accueil' %}">accueil</a>
-<div class="">
-    <h1 class="">titre: {{ appartement.titre }}</h1>
-    <p class="">Quartier : {{ appartement.quartier }}</p>
-    <p class="">{{ appartement.prix }} FCFA</p>
-    <p class="">{{ appartement.description }}</p>
-    <p class="">Contact propriétaire : {{ appartement.contact_proprietaire }}</p>
-
-    {% if appartement.images.all %}
-    <div class="">
-        {% for image in appartement.images.all %}
-        <img src="{{ image.image.url }}" class="">
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    {% if user.is_authenticated %}
-        {% if user.role == 'ADMIN' or user == appartement.proprietaire %}
-        <div class="">
-            <a href="{% url 'modifier_appartement' appartement.id %}" class="">✏️ Modifier</a>
-            
-            <form method="post" action="{% url 'supprimer_appartement' appartement.id %}" onsubmit="return confirm('Supprimer cet appartement ?');">
-                {% csrf_token %}
-                <button type="submit" class="">🗑 Supprimer</button>
-            </form>
+{% extends 'base.html' %}
+{% block page_title %}Détail appartement - IMMOPro{% endblock %}
+{% block content %}
+<section class="view">
+    <header class="view-head">
+        <div>
+            <h2>{{ appartement.titre }}</h2>
+            <p>Consultez les informations complètes de cette annonce.</p>
         </div>
-        {% endif %}
-    {% endif %}
-</div>
+        <span class="badge">{{ appartement.type_logement }}</span>
+    </header>
 
+    <div class="dashboard-grid" style="grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.9fr);">
+        <div class="panel">
+            <div class="panel-body">
+                {% if images %}
+                <img
+                    src="{{ images.0.image.url }}"
+                    alt="{{ appartement.titre }}"
+                    style="width:100%; height:320px; object-fit:cover; border-radius:12px; border:1px solid var(--border); margin-bottom:12px;"
+                >
+
+                {% if images|length > 1 %}
+                <div class="cards" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); margin-bottom: 0;">
+                    {% for image in images %}
+                    <img
+                        src="{{ image.image.url }}"
+                        alt="Image {{ forloop.counter }}"
+                        style="width:100%; height:90px; object-fit:cover; border-radius:10px; border:1px solid var(--border);"
+                    >
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% elif appartement.photo %}
+                <img
+                    src="{{ appartement.photo.url }}"
+                    alt="{{ appartement.titre }}"
+                    style="width:100%; height:320px; object-fit:cover; border-radius:12px; border:1px solid var(--border);"
+                >
+                {% else %}
+                <div class="panel" style="height:220px; display:flex; align-items:center; justify-content:center;">
+                    <p class="list-meta">Aucune image disponible</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <aside class="stack">
+            <div class="panel">
+                <p class="panel-title">Informations</p>
+                <div class="panel-body">
+                    <ul class="list-clean">
+                        <li class="list-item"><span>Quartier</span><span class="list-meta">{{ appartement.quartier }}</span></li>
+                        <li class="list-item"><span>Prix</span><span class="list-meta">{{ appartement.prix }} FCFA</span></li>
+                        <li class="list-item"><span>Contact</span><span class="list-meta">{{ appartement.contact_proprietaire }}</span></li>
+                        <li class="list-item"><span>Disponibilité</span><span class="status success">Disponible</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel">
+                <p class="panel-title">Description</p>
+                <div class="panel-body">
+                    <p class="list-meta" style="font-size: 0.92rem; color: var(--text);">{{ appartement.description }}</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <p class="panel-title">Actions</p>
+                <div class="panel-body">
+                    <div class="btn-row">
+                        <a href="{% url 'feed' %}" style="text-decoration:none;"><button type="button" class="btn-secondary">Retour au feed</button></a>
+                        {% if user.is_authenticated %}
+                            {% if user.role == 'ADMIN' or user == appartement.proprietaire %}
+                            <a href="{% url 'modifier_appartement' appartement.id %}" style="text-decoration:none;"><button type="button">Modifier</button></a>
+                            <form method="post" action="{% url 'supprimer_appartement' appartement.id %}" onsubmit="return confirm('Supprimer cet appartement ?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-secondary">Supprimer</button>
+                            </form>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}
