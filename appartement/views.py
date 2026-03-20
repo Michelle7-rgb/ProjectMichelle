@@ -8,8 +8,8 @@ from django.contrib.auth.decorators import login_required
 #accueil
 def accueil(request):
     # Si l'utilisateur est connecté, redirige vers le feed
-    # if request.user.is_authenticated:
-    #     return redirect('feed')
+    if request.user.is_authenticated:
+        return redirect('feed')
 
     # Sinon, affiche la page d'accueil publique
     appartements = Appartement.objects.filter(disponible=True)
@@ -43,7 +43,7 @@ def ajouter_appartement(request):
 
         return redirect('appartement_detail', pk=appartement.id)
 
-    return render(request, 'ajouter_appartement.html')
+    return render(request, 'owner_publish.html')
 
 def supprimer_appartement(request, id):
     appartement = get_object_or_404(Appartement, id=id)
@@ -207,4 +207,4 @@ def dashboard_admin(request):
     return render(request, 'admin_review.html', context)
 
 def owner_listings(request):
-    return render(request, "owner_listings.html",{"active_view": "owner-listings"})
+    return render(request, "owner_listings.html")

@@ -1,42 +1,41 @@
-{% load  static  %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'app.css' %}">
-    <title>Document</title>
-</head>
-<body>
-    <aside class="sidebar" id="sidebar">
+<aside class="sidebar" id="sidebar">
     <div class="sidebar-head">
         <div class="logo">IMMO<span>Pro</span></div>
         <p class="tagline">Gestion immobilière</p>
     </div>
 
     <nav>
+        {% if user.is_authenticated %}
+            {% if user.role == 'PROPRIETAIRE' %}
         <h4>Propriétaire</h4>
-        <a href="{% url 'owner_listings' %}" class="{% if active_view == 'owner-listings' %}active{% endif %}">Mes annonces</a>
-        <a href="{% url 'owner_publish' %}" class="{% if active_view == 'owner-publish' %}active{% endif %}">Publier</a>
-        <a href="{% url 'messages' %}" class="{% if active_view == 'messages' %}active{% endif %}">Messages</a>
+        <a href="{% url 'feed' %}" data-spa="true">Feed</a>
+        <a href="{% url 'owner_listings' %}" data-spa="true">Mes annonces</a>
+        <a href="{% url 'owner_publish' %}" data-spa="true">Publier</a>
+        <a href="{% url 'messages' %}" data-spa="true">Messages</a>
+
+            {% elif user.role == 'CLIENT' %}
 
         <h4>Locataire</h4>
-        <a href="{% url 'tenant_profile' %}" class="{% if active_view == 'tenant-profile' %}active{% endif %}">Profil</a>
-        <a href="{% url 'tenant_favorites' %}" class="{% if active_view == 'tenant-favorites' %}active{% endif %}">Favoris</a>
-        <a href="{% url 'messages' %}" class="{% if active_view == 'messages' %}active{% endif %}">Messages</a>
+        <a href="{% url 'feed' %}" data-spa="true">Feed</a>
+        <a href="{% url 'tenant_profile' %}" data-spa="true">Profil</a>
+        <a href="{% url 'tenant_favorites' %}" data-spa="true">Favoris</a>
+        <a href="{% url 'messages' %}" data-spa="true">Messages</a>
+
+            {% elif user.role == 'ADMIN' %}
 
         <h4>Admin</h4>
-        <a href="{% url 'admin_review' %}" class="{% if active_view == 'admin-review' %}active{% endif %}">Annonces en attente</a>
+        <a href="{% url 'feed' %}" data-spa="true">Feed</a>
+        <a href="{% url 'admin_review' %}" data-spa="true">Annonces en attente</a>
+            {% endif %}
+        {% else %}
+        <h4>Compte</h4>
+        <a href="{% url 'login' %}">Connexion</a>
+        <a href="{% url 'register' %}">Inscription</a>
+        {% endif %}
     </nav>
 
     <div class="sidebar-footer">
         <button id="themeToggle" type="button" aria-label="Basculer le thème">🌙</button>
-         <button id="collapseBtn" type="button" aria-label="Réduire le menu">☰</button>
+        <button id="collapseBtn" type="button" aria-label="Réduire le menu">☰</button>
     </div>
 </aside>
-<script src="{% static 'app.js' %}"></script>
-</body>
-</html>
-
-
-       

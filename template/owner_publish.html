@@ -12,36 +12,48 @@
 
     <div class="panel">
         <div class="panel-body">
-            <form class="form-grid">
+            <form class="form-grid" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
                 <div class="field">
                     <label>Titre</label>
-                    <input type="text" placeholder="Appartement moderne à Akwa">
+                    <input type="text" name="titre" placeholder="Appartement moderne à Akwa" required>
                 </div>
                 <div class="field">
                     <label>Type de bien</label>
-                    <select>
-                        <option>Appartement</option>
-                        <option>Studio</option>
-                        <option>Maison</option>
+                    <select name="type_logement" required>
+                        <option value="">Choisir...</option>
+                        <option value="appartement">Appartement</option>
+                        <option value="studio">Studio</option>
+                        <option value="maison">Maison</option>
+                        <option value="chambre">Chambre</option>
                     </select>
                 </div>
                 <div class="field">
                     <label>Prix mensuel (FCFA)</label>
-                    <input type="number" placeholder="150000">
+                    <input type="number" name="prix" placeholder="150000" required>
                 </div>
                 <div class="field">
                     <label>Localisation</label>
-                    <input type="text" placeholder="Douala, Bonamoussadi">
+                    <input type="text" name="quartier" placeholder="Douala, Bonamoussadi" required>
+                </div>
+                <div class="field">
+                    <label>Contact propriétaire</label>
+                    <input type="text" name="contact" placeholder="6XX XX XX XX" required>
+                </div>
+                <div class="field">
+                    <label>Photos</label>
+                    <input type="file" name="images" multiple>
                 </div>
                 <div class="field" style="grid-column: 1 / -1;">
                     <label>Description</label>
-                    <textarea placeholder="Décrivez les points forts du bien..."></textarea>
+                    <textarea name="description" placeholder="Décrivez les points forts du bien..." required></textarea>
                 </div>
-            </form>
-            <div class="btn-row" style="margin-top: 12px;">
-                <button type="button">Publier</button>
-                <button type="button" class="btn-secondary">Enregistrer le brouillon</button>
+                <div class="btn-row" style="margin-top: 12px; grid-column: 1 / -1;">
+                    <button type="submit">Publier</button>
+                    <a href="{% url 'owner_listings' %}" class="btn-secondary" style="padding:8px 12px; border-radius:10px; text-decoration:none;">Annuler</a>
+                </div>
             </div>
+            </form>
         </div>
     </div>
 </section>
