@@ -1,45 +1,65 @@
 :root {
-    --bg: #f2f5fa;
+    --bg: #eef2f7;
     --bg-elevated: #ffffff;
     --card: #ffffff;
-    --text: #111827;
-    --text-muted: #6b7280;
-    --primary: #4f46e5;
-    --primary-soft: #e0e7ff;
+    --text: #1c2740;
+    --text-muted: #667085;
+    --primary: #2c8b76;
+    --primary-soft: #def2ec;
+    --brand-navy: #253f74;
+    --brand-navy-deep: #1a2f5a;
     --success: #16a34a;
-    --warning: #d97706;
-    --danger: #dc2626;
-    --border: #e6e8ef;
-    --shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    --warning: #c9780b;
+    --danger: #c0343a;
+    --border: #dde4ef;
+    --shadow: 0 14px 28px rgba(16, 29, 58, 0.08);
+    --font-body: 'Manrope', sans-serif;
+    --font-heading: 'Playfair Display', serif;
 }
 
 body.dark {
-    --bg: #0b1220;
-    --bg-elevated: #111a2b;
-    --card: #121d30;
-    --text: #edf2ff;
-    --text-muted: #9ca8c7;
-    --primary: #7c8cff;
-    --primary-soft: #26355f;
-    --success: #4ade80;
-    --warning: #fbbf24;
-    --danger: #f87171;
-    --border: #23314e;
-    --shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
+    --bg: #0f1626;
+    --bg-elevated: #152038;
+    --card: #17253f;
+    --text: #e8edf8;
+    --text-muted: #a6b4ce;
+    --primary: #4db59f;
+    --primary-soft: #274d4a;
+    --brand-navy: #213a6a;
+    --brand-navy-deep: #15294e;
+    --success: #47cd7f;
+    --warning: #efb950;
+    --danger: #f48d95;
+    --border: #2a3a5d;
+    --shadow: 0 16px 32px rgba(3, 8, 18, 0.45);
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
 }
 
 body {
-    background: radial-gradient(circle at top right, rgba(79, 70, 229, 0.08), transparent 40%), var(--bg);
+    background:
+        radial-gradient(circle at 10% 0%, rgba(37, 63, 116, 0.12), transparent 40%),
+        radial-gradient(circle at 100% 100%, rgba(44, 139, 118, 0.12), transparent 34%),
+        var(--bg);
     color: var(--text);
     transition: background 0.3s ease, color 0.3s ease;
     line-height: 1.45;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.heading-serif {
+    font-family: var(--font-heading);
+    letter-spacing: -0.02em;
 }
 
 .app {
@@ -49,8 +69,8 @@ body {
 
 .sidebar {
     width: 250px;
-    background: var(--bg-elevated);
-    border-right: 1px solid var(--border);
+    background: linear-gradient(160deg, var(--brand-navy) 0%, var(--brand-navy-deep) 100%);
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -58,6 +78,7 @@ body {
     position: sticky;
     top: 0;
     height: 100vh;
+    color: #eff4ff;
 }
 
 .sidebar.collapsed {
@@ -70,18 +91,19 @@ body {
 
 .logo {
     font-weight: 700;
-    font-size: 1.25rem;
-    letter-spacing: 0.2px;
+    font-size: 1.42rem;
+    font-family: var(--font-heading);
+    color: #f5f8ff;
 }
 
 .logo span {
-    color: var(--primary);
+    color: #9fd9c9;
 }
 
 .tagline {
     margin-top: 6px;
-    color: var(--text-muted);
-    font-size: 0.85rem;
+    color: rgba(240, 245, 255, 0.72);
+    font-size: 0.84rem;
 }
 
 nav {
@@ -91,10 +113,10 @@ nav {
 
 nav h4 {
     margin: 16px 10px 6px;
-    font-size: 0.8rem;
-    color: var(--text-muted);
+    font-size: 0.78rem;
+    color: rgba(240, 245, 255, 0.65);
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.08em;
 }
 
 nav a {
@@ -102,20 +124,20 @@ nav a {
     padding: 10px 12px;
     border-radius: 10px;
     text-decoration: none;
-    color: var(--text);
+    color: #f6f9ff;
     margin-bottom: 4px;
     transition: background 0.2s ease, color 0.2s ease;
 }
 
 nav a:hover {
-    background: var(--primary-soft);
-    color: var(--primary);
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
 }
 
 nav a.active {
-    background: var(--primary);
-    color: #fff;
-    font-weight: 600;
+    background: rgba(44, 139, 118, 0.34);
+    color: #d8f4ec;
+    font-weight: 700;
 }
 
 .sidebar-footer {
@@ -123,14 +145,14 @@ nav a.active {
     display: flex;
     gap: 8px;
     justify-content: space-between;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .sidebar-footer button {
     width: 100%;
-    background: var(--primary-soft);
-    color: var(--text);
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.24);
 }
 
 #collapseBtn {
@@ -139,7 +161,7 @@ nav a.active {
 
 .sidebar-footer button:hover {
     opacity: 1;
-    background: var(--primary);
+    background: rgba(44, 139, 118, 0.62);
     color: #fff;
 }
 
@@ -154,7 +176,7 @@ nav a.active {
     border-radius: 10px;
     border: 1px solid var(--border);
     background: var(--bg-elevated);
-    color: var(--text);
+    color: var(--brand-navy);
     box-shadow: var(--shadow);
     cursor: pointer;
 }
@@ -193,8 +215,8 @@ nav a.active {
 }
 
 .view-head h2 {
-    font-size: 1.5rem;
-    line-height: 1.25;
+    font-size: 1.6rem;
+    line-height: 1.2;
     margin-bottom: 6px;
 }
 
@@ -213,7 +235,7 @@ nav a.active {
     background: var(--bg-elevated);
     color: var(--text-muted);
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .cards {
@@ -271,13 +293,17 @@ nav a.active {
     border-bottom: 1px solid var(--border);
     font-size: 0.9rem;
     color: var(--text-muted);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .dashboard-grid {
     display: grid;
     gap: 14px;
     grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.8fr);
+}
+
+.dashboard-grid.detail-grid {
+    grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.9fr);
 }
 
 .stack {
@@ -309,6 +335,11 @@ nav a.active {
     font-size: 0.83rem;
 }
 
+.detail-description {
+    font-size: 0.92rem;
+    color: var(--text);
+}
+
 .feed-section {
     margin-top: 14px;
 }
@@ -318,7 +349,7 @@ nav a.active {
 }
 
 .feed-section-head h3 {
-    font-size: 1.05rem;
+    font-size: 1.18rem;
     margin-bottom: 4px;
 }
 
@@ -358,13 +389,13 @@ nav a.active {
     justify-content: center;
     font-size: 0.78rem;
     font-weight: 700;
-    color: var(--primary);
-    background: var(--primary-soft);
+    color: var(--brand-navy);
+    background: #e6edf8;
     border: 1px solid var(--border);
 }
 
 .feed-author {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.9rem;
 }
 
@@ -397,12 +428,92 @@ nav a.active {
     background: var(--bg-elevated);
 }
 
+.panel-spaced {
+    margin-bottom: 14px;
+}
+
+.listing-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+}
+
+.listing-image-lg {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-bottom: 12px;
+}
+
+.listing-image-sm {
+    width: 100%;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+}
+
+.gallery-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    margin-bottom: 0;
+}
+
+.empty-media {
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.app-title {
+    font-size: 1.08rem;
+    margin-bottom: 6px;
+}
+
+.price-compact {
+    font-size: 1.2rem;
+    margin-top: 8px;
+}
+
+.btn-row.bump {
+    margin-top: 10px;
+}
+
+.span-all {
+    grid-column: 1 / -1;
+}
+
+.action-row-wide {
+    margin-top: 12px;
+    grid-column: 1 / -1;
+}
+
+a.link-reset {
+    text-decoration: none;
+    color: inherit;
+}
+
+a.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    text-decoration: none;
+    padding: 8px 12px;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
     padding: 14px 16px;
     border-bottom: 1px solid var(--border);
     text-align: left;
@@ -418,21 +529,23 @@ th {
 }
 
 tbody tr:hover {
-    background: rgba(79, 70, 229, 0.05);
+    background: rgba(37, 63, 116, 0.05);
 }
 
-button {
+button,
+.button {
     padding: 8px 12px;
     border-radius: 10px;
     border: none;
     cursor: pointer;
     background: var(--primary);
     color: white;
-    font-weight: 600;
+    font-weight: 700;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-button:hover {
+button:hover,
+.button:hover {
     opacity: 0.92;
     transform: translateY(-1px);
 }
@@ -454,7 +567,7 @@ button:hover {
     align-items: center;
     padding: 5px 10px;
     border-radius: 999px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.78rem;
     border: 1px solid transparent;
 }
@@ -504,7 +617,7 @@ button:hover {
     text-transform: uppercase;
     color: var(--text-muted);
     letter-spacing: 0.05em;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .conversation-item {
@@ -519,8 +632,8 @@ button:hover {
 .conversation-item:hover,
 .conversation-item.active {
     background: var(--primary-soft);
-    color: var(--primary);
-    font-weight: 600;
+    color: color-mix(in srgb, var(--brand-navy) 55%, var(--primary));
+    font-weight: 700;
 }
 
 .chat {
@@ -535,7 +648,7 @@ button:hover {
     background: var(--bg-elevated);
     font-size: 0.9rem;
     color: var(--text-muted);
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .chat-messages {
@@ -584,7 +697,8 @@ button:hover {
 .chat-input input:focus,
 .field input:focus,
 .field textarea:focus,
-.field select:focus {
+.field select:focus,
+.form-control:focus {
     outline: 2px solid color-mix(in srgb, var(--primary) 40%, transparent);
     outline-offset: 1px;
     border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
@@ -609,17 +723,24 @@ button:hover {
 
 .field input,
 .field textarea,
-.field select {
+.field select,
+.form-control {
     border: 1px solid var(--border);
     border-radius: 10px;
     padding: 10px;
     background: var(--bg-elevated);
     color: var(--text);
+    width: 100%;
 }
 
 .field textarea {
     resize: vertical;
     min-height: 92px;
+}
+
+input[disabled] {
+    background: color-mix(in srgb, var(--bg) 82%, #ffffff);
+    color: var(--text-muted);
 }
 
 @keyframes fadeIn {
@@ -689,7 +810,8 @@ button:hover {
         height: auto;
     }
 
-    .dashboard-grid {
+    .dashboard-grid,
+    .dashboard-grid.detail-grid {
         grid-template-columns: 1fr;
     }
 

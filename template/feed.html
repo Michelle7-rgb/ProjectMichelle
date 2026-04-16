@@ -11,10 +11,10 @@
     </header>
 
     {% if user.is_authenticated and user.role == 'PROPRIETAIRE' %}
-    <div class="panel" style="margin-bottom: 14px;">
+    <div class="panel panel-spaced">
         <div class="panel-body">
             <div class="btn-row">
-                <a href="{% url 'owner_publish' %}" style="text-decoration:none;">
+                <a href="{% url 'owner_publish' %}" class="link-reset">
                     <button type="button">➕ Ajouter un appartement</button>
                 </a>
             </div>
@@ -30,33 +30,33 @@
             <img
                 src="{{ appartement.images.all.0.image.url }}"
                 alt="{{ appartement.titre }}"
-                style="width:100%; height:180px; object-fit:cover; border-radius:10px; border:1px solid var(--border); margin-bottom:10px;"
+                class="listing-image"
             >
             {% elif appartement.photo %}
             <img
                 src="{{ appartement.photo.url }}"
                 alt="{{ appartement.titre }}"
-                style="width:100%; height:180px; object-fit:cover; border-radius:10px; border:1px solid var(--border); margin-bottom:10px;"
+                class="listing-image"
             >
             {% else %}
-            <div class="panel" style="height:180px; display:flex; align-items:center; justify-content:center; margin-bottom:10px;">
+            <div class="panel listing-image">
                 <p class="list-meta">Pas d'image</p>
             </div>
             {% endif %}
 
             <p class="card-label">{{ appartement.type_logement }}</p>
-            <h3 style="font-size:1.05rem; margin-bottom:6px;">{{ appartement.titre }}</h3>
+            <h3 class="app-title">{{ appartement.titre }}</h3>
             <p class="list-meta">📍 {{ appartement.quartier }}</p>
-            <p class="card-value" style="font-size:1.2rem; margin-top:8px;">{{ appartement.prix }} FCFA</p>
+            <p class="card-value price-compact">{{ appartement.prix }} FCFA</p>
 
-            <div class="btn-row" style="margin-top: 10px;">
-                <a href="{% url 'appartement_detail' appartement.id %}" style="text-decoration:none;">
+            <div class="btn-row bump">
+                <a href="{% url 'appartement_detail' appartement.id %}" class="link-reset">
                     <button type="button">Voir</button>
                 </a>
 
                 {% if user.is_authenticated %}
                 {% if user.role == 'ADMIN' or user == appartement.proprietaire %}
-                <a href="{% url 'modifier_appartement' appartement.id %}" style="text-decoration:none;">
+                <a href="{% url 'modifier_appartement' appartement.id %}" class="link-reset">
                     <button type="button" class="btn-secondary">Modifier</button>
                 </a>
 

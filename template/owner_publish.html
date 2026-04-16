@@ -44,15 +44,14 @@
                     <label>Photos</label>
                     <input type="file" name="images" multiple>
                 </div>
-                <div class="field" style="grid-column: 1 / -1;">
+                <div class="field span-all">
                     <label>Description</label>
                     <textarea name="description" placeholder="Décrivez les points forts du bien..." required></textarea>
                 </div>
-                <div class="btn-row" style="margin-top: 12px; grid-column: 1 / -1;">
+                <div class="btn-row action-row-wide">
                     <button type="submit">Publier</button>
-                    <a href="{% url 'owner_listings' %}" class="btn-secondary" style="padding:8px 12px; border-radius:10px; text-decoration:none;">Annuler</a>
+                    <a href="{% url 'owner_listings' %}" class="btn-secondary">Annuler</a>
                 </div>
-            </div>
             </form>
         </div>
     </div>

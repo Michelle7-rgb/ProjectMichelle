@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block page_title %}Conversation - IMMOPro{% endblock %}
+{% block content %}
+<section class="view">
+    <header class="view-head">
+        <div>
+            <h2>Conversation</h2>
+            <p>Échange détaillé autour d’un bien précis.</p>
+        </div>
+        <span class="badge">En cours</span>
+    </header>
+
+    <div class="dashboard-grid detail-grid">
+        <div class="panel">
+            <p class="panel-title">Messages</p>
+            <div class="panel-body">
+                <div class="stack">
+                    {% for message in messages %}
+                    <div class="panel">
+                        <div class="panel-body">
+                            <p class="list-meta">{{ message.expediteur.username }}</p>
+                            <p class="feed-text">{{ message.contenu }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="list-meta">Aucun message dans cette conversation.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <aside class="stack">
+            <div class="panel">
+                <p class="panel-title">Conversation liée</p>
+                <div class="panel-body">
+                    <ul class="list-clean">
+                        <li class="list-item"><span>Locataire</span><span class="list-meta">{{ conversation.locataire.username }}</span></li>
+                        <li class="list-item"><span>Propriétaire</span><span class="list-meta">{{ conversation.proprietaire.username }}</span></li>
+                        <li class="list-item"><span>Bien</span><span class="list-meta">{{ conversation.logement.titre }}</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel">
+                <p class="panel-title">Répondre</p>
+                <div class="panel-body">
+                    <form method="post" class="form-grid">
+                        {% csrf_token %}
+                        <div class="field span-all">
+                            <label for="contenu">Votre message</label>
+                            <textarea id="contenu" name="contenu" placeholder="Écrire un message..."></textarea>
+                        </div>
+                        <div class="btn-row span-all">
+                            <button type="submit">Envoyer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </aside>
+    </div>
+</section>
+{% endblock %}

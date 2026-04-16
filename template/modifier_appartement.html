@@ -15,7 +15,7 @@
             <form method="post" class="form-grid">
                 {% csrf_token %}
 
-                <div class="field" style="grid-column: 1 / -1;">
+                <div class="field span-all">
                     <label for="titre">Titre</label>
                     <input id="titre" type="text" name="titre" value="{{ appartement.titre }}" placeholder="Titre" required>
                 </div>
@@ -40,14 +40,14 @@
                     <input type="text" value="{{ appartement.contact_proprietaire }}" disabled>
                 </div>
 
-                <div class="field" style="grid-column: 1 / -1;">
+                <div class="field span-all">
                     <label for="description">Description</label>
                     <textarea id="description" name="description" placeholder="Description" required>{{ appartement.description }}</textarea>
                 </div>
 
-                <div class="btn-row" style="grid-column: 1 / -1; margin-top: 6px;">
+                <div class="btn-row span-all">
                     <button type="submit">Enregistrer les modifications</button>
-                    <a href="{% url 'appartement_detail' appartement.id %}" class="btn-secondary" style="padding:8px 12px; border-radius:10px; text-decoration:none;">Annuler</a>
+                    <a href="{% url 'appartement_detail' appartement.id %}" class="btn-secondary">Annuler</a>
                 </div>
             </form>
         </div>

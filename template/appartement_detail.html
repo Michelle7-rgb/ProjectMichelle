@@ -10,23 +10,23 @@
         <span class="badge">{{ appartement.type_logement }}</span>
     </header>
 
-    <div class="dashboard-grid" style="grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.9fr);">
+    <div class="dashboard-grid detail-grid">
         <div class="panel">
             <div class="panel-body">
                 {% if images %}
                 <img
                     src="{{ images.0.image.url }}"
                     alt="{{ appartement.titre }}"
-                    style="width:100%; height:320px; object-fit:cover; border-radius:12px; border:1px solid var(--border); margin-bottom:12px;"
+                    class="listing-image-lg"
                 >
 
                 {% if images|length > 1 %}
-                <div class="cards" style="grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); margin-bottom: 0;">
+                <div class="cards gallery-grid">
                     {% for image in images %}
                     <img
                         src="{{ image.image.url }}"
                         alt="Image {{ forloop.counter }}"
-                        style="width:100%; height:90px; object-fit:cover; border-radius:10px; border:1px solid var(--border);"
+                        class="listing-image-sm"
                     >
                     {% endfor %}
                 </div>
@@ -35,10 +35,10 @@
                 <img
                     src="{{ appartement.photo.url }}"
                     alt="{{ appartement.titre }}"
-                    style="width:100%; height:320px; object-fit:cover; border-radius:12px; border:1px solid var(--border);"
+                    class="listing-image-lg"
                 >
                 {% else %}
-                <div class="panel" style="height:220px; display:flex; align-items:center; justify-content:center;">
+                <div class="panel empty-media">
                     <p class="list-meta">Aucune image disponible</p>
                 </div>
                 {% endif %}
@@ -61,7 +61,7 @@
             <div class="panel">
                 <p class="panel-title">Description</p>
                 <div class="panel-body">
-                    <p class="list-meta" style="font-size: 0.92rem; color: var(--text);">{{ appartement.description }}</p>
+                    <p class="detail-description">{{ appartement.description }}</p>
                 </div>
             </div>
 
@@ -69,10 +69,10 @@
                 <p class="panel-title">Actions</p>
                 <div class="panel-body">
                     <div class="btn-row">
-                        <a href="{% url 'feed' %}" style="text-decoration:none;"><button type="button" class="btn-secondary">Retour au feed</button></a>
+                        <a href="{% url 'feed' %}" class="link-reset"><button type="button" class="btn-secondary">Retour au feed</button></a>
                         {% if user.is_authenticated %}
                             {% if user.role == 'ADMIN' or user == appartement.proprietaire %}
-                            <a href="{% url 'modifier_appartement' appartement.id %}" style="text-decoration:none;"><button type="button">Modifier</button></a>
+                            <a href="{% url 'modifier_appartement' appartement.id %}" class="link-reset"><button type="button">Modifier</button></a>
                             <form method="post" action="{% url 'supprimer_appartement' appartement.id %}" onsubmit="return confirm('Supprimer cet appartement ?');">
                                 {% csrf_token %}
                                 <button type="submit" class="btn-secondary">Supprimer</button>

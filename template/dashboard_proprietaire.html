@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block page_title %}Dashboard propriétaire - IMMOPro{% endblock %}
+{% block content %}
+<section class="view">
+    <header class="view-head">
+        <div>
+            <h2>Dashboard Propriétaire</h2>
+            <p>Gardez un aperçu clair de vos annonces et de leur performance.</p>
+        </div>
+        <span class="badge">{{ appartements|length }} biens</span>
+    </header>
+
+    <div class="cards">
+        <article class="card">
+            <p class="card-label">Annonces actives</p>
+            <p class="card-value">{{ appartements|length }}</p>
+            <p class="card-trend">Biens publiés</p>
+        </article>
+        <article class="card">
+            <p class="card-label">Validées</p>
+            <p class="card-value">8</p>
+            <p class="card-trend">Taux de validation élevé</p>
+        </article>
+        <article class="card">
+            <p class="card-label">Demandes reçues</p>
+            <p class="card-value">24</p>
+            <p class="card-trend">Ce mois-ci</p>
+        </article>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="panel">
+            <p class="panel-title">Mes annonces</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Quartier</th>
+                        <th>Prix</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appartement in appartements %}
+                    <tr>
+                        <td>{{ appartement.titre }}</td>
+                        <td>{{ appartement.quartier }}</td>
+                        <td>{{ appartement.prix }} FCFA</td>
+                        <td><span class="status success">Publié</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">Aucune annonce pour le moment.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="stack">
+            <div class="panel">
+                <p class="panel-title">Aperçu du compte</p>
+                <div class="panel-body">
+                    <ul class="list-clean">
+                        <li class="list-item"><span>Nom</span><span class="list-meta">{{ user.username }}</span></li>
+                        <li class="list-item"><span>Rôle</span><span class="status success">Propriétaire</span></li>
+                        <li class="list-item"><span>Publication</span><span class="list-meta">Rythme stable</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel">
+                <p class="panel-title">Actions rapides</p>
+                <div class="panel-body">
+                    <div class="btn-row">
+                        <a href="{% url 'owner_publish' %}" class="link-reset"><button type="button">Nouvelle annonce</button></a>
+                        <a href="{% url 'messages' %}" class="link-reset"><button type="button" class="btn-secondary">Messages</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
