@@ -18,6 +18,20 @@
         </div>
     </main>
 </div>
+<footer class="site-footer">
+    <div class="site-footer-inner">
+        <div>
+            <p class="site-footer-brand">Logement</p>
+            <p class="site-footer-text">Plateforme immobilière sobre, moderne et pensée pour aller vite.</p>
+        </div>
+        <div class="site-footer-links">
+            <a href="{% url 'feed' %}">Feed</a>
+            <a href="{% url 'tenant_favorites' %}">Favoris</a>
+            <a href="{% url 'messages' %}">Messages</a>
+        </div>
+        <p class="site-footer-copy">© 2026 Logement. Tous droits réservés.</p>
+    </div>
+</footer>
 <div id="sidebarBackdrop" class="sidebar-backdrop" aria-hidden="true"></div>
 <script src="{% static 'app.js' %}"></script>
 </body>

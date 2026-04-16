@@ -2,13 +2,24 @@
 {% block page_title %}Feed - IMMOPro{% endblock %}
 {% block content %}
 <section class="view">
-    <header class="view-head">
-        <div>
-            <h2>Fil d'actualité</h2>
-            <p>Découvrez les appartements disponibles et leurs détails.</p>
+    <section class="feed-hero panel">
+        <div class="feed-hero-inner">
+            <h2>Trouvez votre prochain appartement</h2>
+            <p>Ville, type de logement, prix et quartier en quelques clics.</p>
+            <form class="feed-search" method="get" action="{% url 'feed' %}">
+                <input type="text" name="quartier" value="{{ request.GET.quartier|default:'' }}" placeholder="Ville / quartier">
+                <select name="type">
+                    <option value="">Type de logement</option>
+                    <option value="appartement" {% if request.GET.type == 'appartement' %}selected{% endif %}>Appartement</option>
+                    <option value="studio" {% if request.GET.type == 'studio' %}selected{% endif %}>Studio</option>
+                    <option value="maison" {% if request.GET.type == 'maison' %}selected{% endif %}>Maison</option>
+                    <option value="chambre" {% if request.GET.type == 'chambre' %}selected{% endif %}>Chambre</option>
+                </select>
+                <input type="number" name="prix" value="{{ request.GET.prix|default:'' }}" placeholder="Prix max (FCFA)">
+                <button type="submit">Rechercher</button>
+            </form>
         </div>
-        <span class="badge">{{ appartements|length }} annonces</span>
-    </header>
+    </section>
 
     {% if user.is_authenticated and user.role == 'PROPRIETAIRE' %}
     <div class="panel panel-spaced">
@@ -22,60 +33,132 @@
     </div>
     {% endif %}
 
-    {% if appartements %}
-    <div class="cards">
-        {% for appartement in appartements %}
-        <article class="card">
-            {% if appartement.images.all %}
-            <img
-                src="{{ appartement.images.all.0.image.url }}"
-                alt="{{ appartement.titre }}"
-                class="listing-image"
-            >
-            {% elif appartement.photo %}
-            <img
-                src="{{ appartement.photo.url }}"
-                alt="{{ appartement.titre }}"
-                class="listing-image"
-            >
+    <div class="feed-layout">
+        <aside class="feed-left stack">
+            <div class="panel">
+                <p class="panel-title">Mes favoris</p>
+                <div class="panel-body">
+                    <ul class="list-clean">
+                        {% for appartement in appartements|slice:":3" %}
+                        <li class="list-item compact-item">
+                            <div>
+                                <p class="compact-title">{{ appartement.titre|truncatechars:23 }}</p>
+                                <p class="list-meta">{{ appartement.prix }} FCFA</p>
+                            </div>
+                            <span class="heart">❤</span>
+                        </li>
+                        {% empty %}
+                        <li class="list-meta">Aucun favori pour le moment.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel">
+                <p class="panel-title">Messages récents</p>
+                <div class="panel-body">
+                    <ul class="list-clean">
+                        <li class="list-item compact-item">
+                            <div>
+                                <p class="compact-title">Appartement T3</p>
+                                <p class="list-meta">Ok, à demain</p>
+                            </div>
+                            <span class="list-meta">1h</span>
+                        </li>
+                        <li class="list-item compact-item">
+                            <div>
+                                <p class="compact-title">Studio meublé</p>
+                                <p class="list-meta">Disponibilité confirmée</p>
+                            </div>
+                            <span class="list-meta">3h</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel city-band">
+                <div class="city-band-overlay">
+                    <p>Appartement lumineux</p>
+                    <span>Inspiration</span>
+                </div>
+            </div>
+        </aside>
+
+        <div class="feed-main">
+            <header class="view-head feed-main-head">
+                <div>
+                    <h2>Annonces disponibles</h2>
+                    <p>Découvrez les appartements disponibles et leurs détails.</p>
+                </div>
+                <span class="badge">{{ appartements|length }} annonces</span>
+            </header>
+
+            {% if appartements %}
+            <div class="feed-cards-grid">
+                {% for appartement in appartements %}
+                <article class="card feed-card">
+                    {% if appartement.images.all %}
+                    <img
+                        src="{{ appartement.images.all.0.image.url }}"
+                        alt="{{ appartement.titre }}"
+                        class="feed-card-image"
+                    >
+                    {% elif appartement.photo %}
+                    <img
+                        src="{{ appartement.photo.url }}"
+                        alt="{{ appartement.titre }}"
+                        class="feed-card-image"
+                    >
+                    {% else %}
+                    <div class="panel feed-card-image empty-card-image">
+                        <p class="list-meta">Pas d'image</p>
+                    </div>
+                    {% endif %}
+
+                    <p class="card-label">{{ appartement.type_logement|title }} · {{ appartement.quartier }}</p>
+                    <h3 class="feed-card-title">{{ appartement.titre }}</h3>
+                    <p class="feed-card-price">{{ appartement.prix }} FCFA <span>/ mois</span></p>
+
+                    <div class="btn-row bump">
+                        <a href="{% url 'appartement_detail' appartement.id %}" class="link-reset">
+                            <button type="button">Voir</button>
+                        </a>
+
+                        {% if user.is_authenticated %}
+                        {% if user.role == 'ADMIN' or user == appartement.proprietaire %}
+                        <a href="{% url 'modifier_appartement' appartement.id %}" class="link-reset">
+                            <button type="button" class="btn-secondary">Modifier</button>
+                        </a>
+
+                        <form method="post" action="{% url 'supprimer_appartement' appartement.id %}" onsubmit="return confirm('Supprimer cet appartement ?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-secondary">Supprimer</button>
+                        </form>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+
+            <div class="feed-pagination panel">
+                <div class="panel-body">
+                    <button type="button" class="btn-secondary">‹</button>
+                    <button type="button" class="is-active">1</button>
+                    <button type="button" class="btn-secondary">2</button>
+                    <button type="button" class="btn-secondary">3</button>
+                    <button type="button" class="btn-secondary">4</button>
+                    <button type="button" class="btn-secondary">›</button>
+                </div>
+            </div>
             {% else %}
-            <div class="panel listing-image">
-                <p class="list-meta">Pas d'image</p>
+            <div class="panel">
+                <div class="panel-body">
+                    <p class="list-meta">Aucun appartement disponible pour le moment.</p>
+                </div>
             </div>
             {% endif %}
-
-            <p class="card-label">{{ appartement.type_logement }}</p>
-            <h3 class="app-title">{{ appartement.titre }}</h3>
-            <p class="list-meta">📍 {{ appartement.quartier }}</p>
-            <p class="card-value price-compact">{{ appartement.prix }} FCFA</p>
-
-            <div class="btn-row bump">
-                <a href="{% url 'appartement_detail' appartement.id %}" class="link-reset">
-                    <button type="button">Voir</button>
-                </a>
-
-                {% if user.is_authenticated %}
-                {% if user.role == 'ADMIN' or user == appartement.proprietaire %}
-                <a href="{% url 'modifier_appartement' appartement.id %}" class="link-reset">
-                    <button type="button" class="btn-secondary">Modifier</button>
-                </a>
-
-                <form method="post" action="{% url 'supprimer_appartement' appartement.id %}" onsubmit="return confirm('Supprimer cet appartement ?');">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-secondary">Supprimer</button>
-                </form>
-                {% endif %}
-                {% endif %}
-            </div>
-        </article>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="panel">
-        <div class="panel-body">
-            <p class="list-meta">Aucun appartement disponible pour le moment.</p>
         </div>
     </div>
-    {% endif %}
 </section>
 {% endblock %}
