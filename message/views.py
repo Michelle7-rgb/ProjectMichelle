@@ -38,7 +38,7 @@ def creer_conversation(request, logement_id):
         proprietaire=logement.proprietaire
     )
 
-    return redirect('voir_conversation.html', conversation_id=conversation.id)
+    return redirect('voir_conversation', conversation_id=conversation.id)
 
 
 @login_required
@@ -57,7 +57,7 @@ def voir_conversation(request, conversation_id):
             contenu=contenu
         )
 
-        return redirect('voir_conversation.html', conversation_id=conversation.id)
+        return redirect('voir_conversation', conversation_id=conversation.id)
 
     return render(request, 'conversation.html', {
         'conversation': conversation,

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block page_title %}Conversations - IMMOPro{% endblock %}
+{% block content %}
+<section class="view">
+    <header class="view-head">
+        <div>
+            <h2>Liste des conversations</h2>
+            <p>Retrouvez tous vos échanges récents au même endroit.</p>
+        </div>
+        <span class="badge">{{ conversations|length }} fils</span>
+    </header>
+
+    <div class="cards">
+        <article class="card">
+            <p class="card-label">Conversations actives</p>
+            <p class="card-value">{{ conversations|length }}</p>
+            <p class="card-trend">Derniers échanges</p>
+        </article>
+        <article class="card">
+            <p class="card-label">Non lus</p>
+            <p class="card-value">2</p>
+            <p class="card-trend">À traiter</p>
+        </article>
+        <article class="card">
+            <p class="card-label">Temps moyen</p>
+            <p class="card-value">12 min</p>
+            <p class="card-trend">Réponse rapide</p>
+        </article>
+    </div>
+
+    <div class="panel">
+        <p class="panel-title">Toutes les conversations</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Bien</th>
+                    <th>Locataire</th>
+                    <th>Propriétaire</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for conversation in conversations %}
+                <tr>
+                    <td>{{ conversation.logement.titre }}</td>
+                    <td>{{ conversation.locataire.username }}</td>
+                    <td>{{ conversation.proprietaire.username }}</td>
+                    <td><a href="{% url 'voir_conversation' conversation.id %}">Ouvrir</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">Aucune conversation disponible.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

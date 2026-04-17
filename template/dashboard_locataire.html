@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block page_title %}Dashboard locataire - IMMOPro{% endblock %}
+{% block content %}
+<section class="view">
+    <header class="view-head">
+        <div>
+            <h2>Dashboard Locataire</h2>
+            <p>Suivez vos favoris, vos demandes et votre activité récente.</p>
+        </div>
+        <span class="badge">Actif aujourd'hui</span>
+    </header>
+
+    <div class="cards">
+        <article class="card">
+            <p class="card-label">Favoris suivis</p>
+            <p class="card-value">{{ favoris|length }}</p>
+            <p class="card-trend">Biens enregistrés</p>
+        </article>
+        <article class="card">
+            <p class="card-label">Demandes envoyées</p>
+            <p class="card-value">7</p>
+            <p class="card-trend">2 en attente</p>
+        </article>
+        <article class="card">
+            <p class="card-label">Messages non lus</p>
+            <p class="card-value">3</p>
+            <p class="card-trend">Réponse recommandée</p>
+        </article>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="panel">
+            <p class="panel-title">Mes favoris récents</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bien</th>
+                        <th>Quartier</th>
+                        <th>Prix</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for favori in favoris %}
+                    <tr>
+                        <td>{{ favori.appartement.titre }}</td>
+                        <td>{{ favori.appartement.quartier }}</td>
+                        <td>{{ favori.appartement.prix }} FCFA</td>
+                        <td><span class="status success">Disponible</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">Aucun favori enregistré pour le moment.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="stack">
+            <div class="panel">
+                <p class="panel-title">Informations du compte</p>
+                <div class="panel-body">
+                    <ul class="list-clean">
+                        <li class="list-item"><span>Nom</span><span class="list-meta">{{ user.username }}</span></li>
+                        <li class="list-item"><span>Email</span><span class="list-meta">{{ user.email|default:'Non renseigné' }}</span></li>
+                        <li class="list-item"><span>Rôle</span><span class="status success">Locataire</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel">
+                <p class="panel-title">Actions rapides</p>
+                <div class="panel-body">
+                    <div class="btn-row">
+                        <a href="{% url 'tenant_favorites' %}" class="link-reset"><button type="button">Voir favoris</button></a>
+                        <a href="{% url 'messages' %}" class="link-reset"><button type="button" class="btn-secondary">Messages</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

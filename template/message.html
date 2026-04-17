@@ -1,30 +1,30 @@
 {% extends 'base.html' %}
-{% block page_title %}Messagerie - IMMOPro{% endblock %}
+{% block page_title %}Messages - IMMOPro{% endblock %}
 {% block content %}
 <section class="view">
     <header class="view-head">
         <div>
             <h2>Messagerie</h2>
-            <p>Échangez rapidement entre propriétaires, locataires et administration.</p>
+            <p>Centralisez les échanges avec propriétaires, locataires et support.</p>
         </div>
-        <span class="badge">2 conversations actives</span>
+        <span class="badge">Support actif</span>
     </header>
 
     <div class="cards">
         <article class="card">
-            <p class="card-label">Réponses rapides</p>
-            <p class="card-value">12 min</p>
-            <p class="card-trend">Temps moyen récent</p>
+            <p class="card-label">Conversations</p>
+            <p class="card-value">8</p>
+            <p class="card-trend">Flux stable</p>
         </article>
         <article class="card">
             <p class="card-label">Non lus</p>
-            <p class="card-value">3</p>
-            <p class="card-trend">À traiter aujourd'hui</p>
+            <p class="card-value">2</p>
+            <p class="card-trend">Réponse rapide conseillée</p>
         </article>
         <article class="card">
-            <p class="card-label">Conversations</p>
-            <p class="card-value">8</p>
-            <p class="card-trend">Actives ce mois-ci</p>
+            <p class="card-label">Temps moyen</p>
+            <p class="card-value">12 min</p>
+            <p class="card-trend">Derniers échanges</p>
         </article>
     </div>
 
@@ -36,9 +36,10 @@
             <div class="conversation-item">Support Admin</div>
         </aside>
         <section class="chat">
-                   <div class="chat-head">Discussion avec Jean (Propriétaire)</div>
-            <div class="chat-messages" id="chatMessages">
+            <div class="chat-head">Discussion actuelle</div>
+            <div class="chat-messages">
                 <div class="message received">Bonjour, le bien est-il toujours disponible ?</div>
+                <div class="message sent">Oui, il est encore libre et visible sur le feed.</div>
             </div>
             <form class="chat-input" id="chatForm">
                 <input type="text" id="msgInput" placeholder="Écrire un message...">

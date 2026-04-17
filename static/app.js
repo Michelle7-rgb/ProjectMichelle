@@ -6,6 +6,22 @@ const sidebarBackdrop = document.getElementById("sidebarBackdrop");
 const sidebar = document.getElementById("sidebar");
 const navLinks = document.querySelectorAll("nav a[data-spa='true']");
 
+function safeStorageGet(key) {
+    try {
+        return localStorage.getItem(key);
+    } catch {
+        return null;
+    }
+}
+
+function safeStorageSet(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch {
+        // Ignore storage errors (private mode / blocked storage).
+    }
+}
+
 function isMobile() {
     return window.matchMedia("(max-width: 900px)").matches;
 }
@@ -21,7 +37,7 @@ function setMobileMenuState(isOpen) {
     mobileMenuBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
 }
 
-if (localStorage.getItem("theme") === "dark") {
+if (safeStorageGet("theme") === "dark") {
     document.body.classList.add("dark");
 }
 
@@ -29,7 +45,7 @@ if (themeToggle) {
     themeToggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
     themeToggle.addEventListener("click", () => {
         document.body.classList.toggle("dark");
-        localStorage.setItem(
+        safeStorageSet(
             "theme",
             document.body.classList.contains("dark") ? "dark" : "light"
         );
@@ -41,7 +57,10 @@ if (collapseBtn && sidebar) {
     collapseBtn.addEventListener("click", () => {
         if (isMobile()) {
             setMobileMenuState(!sidebar.classList.contains("mobile-open"));
+            return;
         }
+
+        sidebar.classList.toggle("collapsed");
     });
 }
 
@@ -63,8 +82,12 @@ if (sidebarBackdrop) {
 
 function setActiveLink(pathname) {
     navLinks.forEach((link) => {
-        const linkPath = new URL(link.href, window.location.origin).pathname;
-        link.classList.toggle("active", linkPath === pathname);
+        try {
+            const linkPath = new URL(link.href, window.location.origin).pathname;
+            link.classList.toggle("active", linkPath === pathname);
+        } catch {
+            link.classList.remove("active");
+        }
     });
 }
 

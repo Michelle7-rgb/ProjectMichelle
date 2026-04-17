@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block page_title %}Dashboard admin - IMMOPro{% endblock %}
+{% block content %}
+<section class="view">
+    <header class="view-head">
+        <div>
+            <h2>Dashboard Admin</h2>
+            <p>Contrôlez les annonces, les utilisateurs et la qualité du catalogue.</p>
+        </div>
+        <span class="badge">Supervision globale</span>
+    </header>
+
+    <div class="cards">
+        <article class="card">
+            <p class="card-label">Utilisateurs</p>
+            <p class="card-value">128</p>
+            <p class="card-trend">Comptes actifs</p>
+        </article>
+        <article class="card">
+            <p class="card-label">Annonces</p>
+            <p class="card-value">42</p>
+            <p class="card-trend">Catalogue disponible</p>
+        </article>
+        <article class="card">
+            <p class="card-label">Signalements</p>
+            <p class="card-value">1</p>
+            <p class="card-trend">À traiter</p>
+        </article>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="panel">
+            <p class="panel-title">Dernières publications</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Studio Yaoundé</td>
+                        <td>Jean N.</td>
+                        <td><span class="status warning">En attente</span></td>
+                    </tr>
+                    <tr>
+                        <td>Appartement Akwa</td>
+                        <td>Agence Delta</td>
+                        <td><span class="status success">Validé</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="stack">
+            <div class="panel">
+                <p class="panel-title">Actions rapides</p>
+                <div class="panel-body">
+                    <div class="btn-row">
+                        <a href="{% url 'admin_review' %}" class="link-reset"><button type="button">Modération</button></a>
+                        <a href="{% url 'feed' %}" class="link-reset"><button type="button" class="btn-secondary">Voir le feed</button></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <p class="panel-title">Note de supervision</p>
+                <div class="panel-body">
+                    <p class="list-meta">Utilise ce tableau pour garder un contrôle rapide sur les annonces avant leur mise en avant.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
