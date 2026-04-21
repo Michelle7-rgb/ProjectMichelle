@@ -1,7 +1,12 @@
-from django.shortcuts import render
-from .models import Appartement, AppartementImage
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.core.exceptions import PermissionDenied
+from django.db.models import Count, Max, Q
+
+from favoris.models import Favoris
+from message.models import Conversation, Message
+from .models import Appartement, AppartementImage
 
 # gestion des vues pour l'application appartement
 
@@ -12,13 +17,11 @@ def accueil(request):
         return redirect('feed')
 
     # Sinon, affiche la page d'accueil publique
-    appartements = Appartement.objects.filter(disponible=True)
+    appartements = Appartement.objects.filter(disponible=True).select_related('proprietaire').prefetch_related('images')
     return render(request, 'accueil.html', {'appartements': appartements})
 
 
 # gestion des appartements
-from django.core.exceptions import PermissionDenied
-
 def ajouter_appartement(request):
     if not request.user.is_authenticated or request.user.role != 'PROPRIETAIRE':
         raise PermissionDenied
@@ -48,7 +51,7 @@ def ajouter_appartement(request):
 def supprimer_appartement(request, id):
     appartement = get_object_or_404(Appartement, id=id)
 
-    if request.user != appartement.proprietaire:
+    if request.user != appartement.proprietaire and request.user.role != 'ADMIN':
         raise PermissionDenied
 
     appartement.delete()
@@ -58,7 +61,7 @@ def supprimer_appartement(request, id):
 def modifier_appartement(request, id):
     appartement = get_object_or_404(Appartement, id=id)
 
-    if request.user != appartement.proprietaire:
+    if request.user != appartement.proprietaire and request.user.role != 'ADMIN':
         raise PermissionDenied
 
     if request.method == 'POST':
@@ -74,7 +77,7 @@ def modifier_appartement(request, id):
 
 def appartement_detail(request, pk):
     appartement = get_object_or_404(Appartement, pk=pk)
-    images = appartement.images.all()
+    images = [image for image in appartement.images.all() if image.image_url_safe]
 
     return render(request, 'appartement_detail.html', {
         'appartement': appartement,
@@ -82,7 +85,7 @@ def appartement_detail(request, pk):
     })
 
 def liste_appartements(request):
-    appartements = Appartement.objects.filter(disponible=True)
+    appartements = Appartement.objects.filter(disponible=True).select_related('proprietaire').prefetch_related('images')
 
     quartier = request.GET.get('quartier')
     type_logement = request.GET.get('type')
@@ -110,7 +113,7 @@ def feed(request):
     """
 
     # Récupérer tous les appartements disponibles
-    appartements = Appartement.objects.filter(disponible=True)
+    appartements = Appartement.objects.filter(disponible=True).select_related('proprietaire').prefetch_related('images')
 
     # --- FILTRAGE ---
     quartier = request.GET.get('quartier')
@@ -128,13 +131,25 @@ def feed(request):
         except ValueError:
             pass  # ignore si mauvais format
 
-    # --- Gestion propriétaire ---
-    proprietaire = request.user
-    user_is_owner = hasattr(proprietaire, 'role') and proprietaire.role == 'PROPRIETAIRE'
+    recent_messages = []
+    mes_favoris = []
+
+    if request.user.is_authenticated:
+        mes_favoris = (
+            Favoris.objects.filter(utilisateur=request.user)
+            .select_related('logement', 'logement__proprietaire')
+            .order_by('-date_ajout')[:3]
+        )
+        recent_messages = (
+            Message.objects.filter(Q(conversation__locataire=request.user) | Q(conversation__proprietaire=request.user))
+            .select_related('conversation', 'conversation__logement', 'expediteur')
+            .order_by('-date_envoi')[:3]
+        )
 
     context = {
         'appartements': appartements,
-        'user_is_owner': user_is_owner,
+        'mes_favoris': mes_favoris,
+        'recent_messages': recent_messages,
     }
 
     return render(request, 'feed.html', context)
@@ -143,21 +158,39 @@ def feed(request):
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
-from .models import Appartement, Favoris
+from favoris.models import Favoris
 
 User = get_user_model()
 
 @login_required
 def dashboard_locataire(request):
-    # Utilisation du bon modèle de favoris et du bon champ de date
-    mes_favoris = Favoris.objects.filter(utilisateur=request.user)
-    return render(request, 'dashboard_locataire.html', {'favoris': mes_favoris})
+    mes_favoris = Favoris.objects.filter(utilisateur=request.user).select_related('logement').order_by('-date_ajout')
+    favoris_disponibles = mes_favoris.filter(logement__disponible=True).count()
+    messages_non_lus = Message.objects.filter(
+        conversation__in=Conversation.objects.filter(Q(locataire=request.user) | Q(proprietaire=request.user)),
+        lu=False,
+    ).exclude(expediteur=request.user).count()
+    return render(request, 'dashboard_locataire.html', {
+        'favoris': mes_favoris,
+        'favoris_count': mes_favoris.count(),
+        'favoris_disponibles': favoris_disponibles,
+        'conversations_count': Conversation.objects.filter(Q(locataire=request.user) | Q(proprietaire=request.user)).count(),
+        'messages_non_lus': messages_non_lus,
+    })
 
+@login_required
 def admin_dashboard(request):
-    return render(request, 'admin_dashboard.html')
+    total_users = User.objects.count()
+    total_annonces = Appartement.objects.count()
+    annonces_recentes = Appartement.objects.select_related('proprietaire').order_by('-date_publication')[:5]
+    return render(request, 'admin_dashboard.html', {
+        'total_users': total_users,
+        'total_annonces': total_annonces,
+        'annonces_recentes': annonces_recentes,
+    })
 
 def message(request):
-    return render(request, 'message.html')
+    return redirect('liste_conversations')
 
 
 from django.shortcuts import render
@@ -166,13 +199,19 @@ from .models import Appartement
 
 @login_required
 def dashboard_proprietaire(request):
-    # On récupère seulement les appartements de la personne connectée
     mes_appartements = Appartement.objects.filter(
         proprietaire=request.user
-    ).order_by('-date_publication')
+    ).select_related('proprietaire').prefetch_related('images').order_by('-date_publication')
+
+    total = mes_appartements.count()
+    disponibles = mes_appartements.filter(disponible=True).count()
+    avec_images = mes_appartements.filter(images__isnull=False).distinct().count()
     
     return render(request, 'dashboard_proprietaire.html', {
-        'appartements': mes_appartements
+        'appartements': mes_appartements,
+        'total_appartements': total,
+        'disponibles': disponibles,
+        'avec_images': avec_images,
     })
 
 
@@ -189,22 +228,24 @@ User = get_user_model()
 
 @login_required
 def dashboard_admin(request):
-    
-    # Compter les éléments importants
     total_users = User.objects.count()
     total_annonces = Appartement.objects.count()
-    
-
-    # Dernières annonces ajoutées
-    Appartements_recentes = Appartement.objects.all().order_by('-date_publication')[:5]
+    appartements_recentes = Appartement.objects.select_related('proprietaire').order_by('-date_publication')[:5]
 
     context = {
         'total_users': total_users,
-        'total_Appartement': Appartement,
-        'Appartement_recentes': Appartement,
+        'total_annonces': total_annonces,
+        'appartements_recentes': appartements_recentes,
     }
 
     return render(request, 'admin_review.html', context)
 
+@login_required
 def owner_listings(request):
-    return render(request, "owner_listings.html")
+    appartements = Appartement.objects.filter(proprietaire=request.user).select_related('proprietaire').prefetch_related('images').order_by('-date_publication')
+    return render(request, "owner_listings.html", {
+        'appartements': appartements,
+        'total_appartements': appartements.count(),
+        'disponibles': appartements.filter(disponible=True).count(),
+        'indisponibles': appartements.filter(disponible=False).count(),
+    })

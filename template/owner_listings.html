@@ -7,78 +7,73 @@
             <h2>Dashboard Propriétaire</h2>
             <p>Suivi de vos biens, performances et statut de publication.</p>
         </div>
-        <span class="badge">Mise à jour aujourd'hui</span>
+        <span class="badge">{{ total_appartements }} annonces</span>
     </header>
 
     <div class="cards">
         <article class="card">
             <p class="card-label">Total annonces</p>
-            <p class="card-value">12</p>
-            <p class="card-trend">+2 ce mois-ci</p>
+            <p class="card-value">{{ total_appartements }}</p>
+            <p class="card-trend">Biens publiés</p>
         </article>
         <article class="card">
             <p class="card-label">Validées</p>
-            <p class="card-value">8</p>
-            <p class="card-trend">Taux de validation 67%</p>
+            <p class="card-value">{{ disponibles }}</p>
+            <p class="card-trend">Affichées dans le catalogue</p>
         </article>
         <article class="card">
             <p class="card-label">En attente</p>
-            <p class="card-value">4</p>
-            <p class="card-trend">Action requise</p>
+            <p class="card-value">{{ indisponibles }}</p>
+            <p class="card-trend">Non visibles publiquement</p>
         </article>
         <article class="card">
             <p class="card-label">Taux de contact</p>
-            <p class="card-value">64%</p>
-            <p class="card-trend">+8% sur 30 jours</p>
+            <p class="card-value">{{ appartements|length }}</p>
+            <p class="card-trend">Annonces chargées</p>
         </article>
     </div>
 
     <div class="dashboard-grid">
         <div class="panel">
-            <p class="panel-title">Annonces récentes</p>
+            <p class="panel-title">Mes annonces</p>
             <table>
                 <thead>
                     <tr>
-                        <th>Image</th>
                         <th>Titre</th>
+                        <th>Quartier</th>
+                        <th>Prix</th>
                         <th>Statut</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for appartement in appartements %}
                     <tr>
-                        <td><img class="thumb" src="https://picsum.photos/seed/immo-1/120/80" alt="Appartement"></td>
-                        <td>Appartement Douala</td>
-                        <td><span class="status success">Validé</span></td>
+                        <td>{{ appartement.titre }}</td>
+                        <td>{{ appartement.quartier }}</td>
+                        <td>{{ appartement.prix }} FCFA</td>
+                        <td>
+                            {% if appartement.disponible %}
+                            <span class="status success">Disponible</span>
+                            {% else %}
+                            <span class="status warning">Indisponible</span>
+                            {% endif %}
+                        </td>
                         <td>
                             <div class="btn-row">
-                                <button>Modifier</button>
-                                <button class="btn-secondary">Supprimer</button>
+                                <a href="{% url 'modifier_appartement' appartement.id %}" class="btn-secondary">Modifier</a>
+                                <form method="post" action="{% url 'supprimer_appartement' appartement.id %}" onsubmit="return confirm('Supprimer cet appartement ?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-secondary">Supprimer</button>
+                                </form>
                             </div>
                         </td>
                     </tr>
+                    {% empty %}
                     <tr>
-                        <td><img class="thumb" src="https://picsum.photos/seed/immo-2/120/80" alt="Studio"></td>
-                        <td>Studio Bepanda</td>
-                        <td><span class="status warning">En attente</span></td>
-                        <td>
-                            <div class="btn-row">
-                                <button>Modifier</button>
-                                <button class="btn-secondary">Supprimer</button>
-                            </div>
-                        </td>
+                        <td colspan="5">Aucune annonce pour le moment.</td>
                     </tr>
-                    <tr>
-                        <td><img class="thumb" src="https://picsum.photos/seed/immo-8/120/80" alt="Maison"></td>
-                        <td>Maison Makepe</td>
-                        <td><span class="status success">Validé</span></td>
-                        <td>
-                            <div class="btn-row">
-                                <button>Modifier</button>
-                                <button class="btn-secondary">Supprimer</button>
-                            </div>
-                        </td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -89,15 +84,15 @@
                 <div class="panel-body">
                     <ul class="list-clean">
                         <li class="list-item">
-                            <span>Valider les photos en attente</span>
-                            <span class="list-meta">2</span>
+                            <span>Publier une annonce propre</span>
+                            <span class="list-meta">1</span>
                         </li>
                         <li class="list-item">
-                            <span>Répondre aux demandes</span>
-                            <span class="list-meta">5</span>
+                            <span>Vérifier les contacts</span>
+                            <span class="list-meta">1</span>
                         </li>
                         <li class="list-item">
-                            <span>Mettre à jour les prix</span>
+                            <span>Mettre à jour les photos</span>
                             <span class="list-meta">1</span>
                         </li>
                     </ul>
@@ -118,55 +113,46 @@
 
     <section class="feed-section">
         <div class="feed-section-head">
-            <h3>Fil d'actualité immobilier</h3>
-            <p>Nouveautés des biens publiés aujourd'hui</p>
+            <h3>Vos dernières annonces</h3>
+            <p>Les biens publiés par votre compte, directement depuis la base.</p>
         </div>
 
         <div class="feed-grid">
             <div class="feed-list">
+                {% for appartement in appartements|slice:":2" %}
                 <article class="feed-post panel">
                     <div class="feed-post-head">
-                        <div class="feed-author-avatar">AD</div>
+                        <div class="feed-author-avatar">{{ appartement.proprietaire.username|slice:":2"|upper }}</div>
                         <div>
-                            <p class="feed-author">Agence Delta</p>
-                            <p class="feed-time">Il y a 12 min · Douala, Akwa</p>
+                            <p class="feed-author">{{ appartement.proprietaire.username }}</p>
+                            <p class="feed-time">{{ appartement.date_publication|timesince }}</p>
                         </div>
                     </div>
-                    <p class="feed-text">Nouveau 3 pièces lumineux avec parking sécurisé et gardiennage 24/7. Visites disponibles dès demain.</p>
-                    <img class="feed-image" src="https://picsum.photos/seed/feed-immo-1/1100/560" alt="Appartement moderne">
+                    <p class="feed-text">{{ appartement.description|truncatewords:24 }}</p>
+                    {% if appartement.primary_image_url %}
+                    <img class="feed-image" src="{{ appartement.primary_image_url }}" alt="{{ appartement.titre }}">
+                    {% endif %}
                     <div class="feed-actions">
-                        <button class="btn-secondary" type="button">👍 Intéressé (24)</button>
-                        <button class="btn-secondary" type="button">💬 Commenter (8)</button>
-                        <button class="btn-secondary" type="button">↗ Partager</button>
+                        <a href="{% url 'appartement_detail' appartement.id %}" class="btn-secondary">Voir</a>
                     </div>
                 </article>
-
-                <article class="feed-post panel">
-                    <div class="feed-post-head">
-                        <div class="feed-author-avatar">IM</div>
-                        <div>
-                            <p class="feed-author">IMMOPlus</p>
-                            <p class="feed-time">Il y a 38 min · Yaoundé, Bastos</p>
-                        </div>
+                {% empty %}
+                <div class="panel">
+                    <div class="panel-body">
+                        <p class="list-meta">Aucune annonce à afficher pour le moment.</p>
                     </div>
-                    <p class="feed-text">Studio meublé premium, internet inclus, proche des axes principaux. Offre spéciale pour signature avant fin de semaine.</p>
-                    <img class="feed-image" src="https://picsum.photos/seed/feed-immo-2/1100/560" alt="Studio meublé">
-                    <div class="feed-actions">
-                        <button class="btn-secondary" type="button">👍 Intéressé (17)</button>
-                        <button class="btn-secondary" type="button">💬 Commenter (5)</button>
-                        <button class="btn-secondary" type="button">↗ Partager</button>
-                    </div>
-                </article>
+                </div>
+                {% endfor %}
             </div>
 
             <aside class="feed-side stack">
                 <div class="panel">
-                    <p class="panel-title">Tendances recherches</p>
+                    <p class="panel-title">Aperçu du catalogue</p>
                     <div class="panel-body">
                         <ul class="list-clean">
-                            <li class="list-item"><span>Studios meublés</span><span class="list-meta">+22%</span></li>
-                            <li class="list-item"><span>Douala centre</span><span class="list-meta">+17%</span></li>
-                            <li class="list-item"><span>2 chambres</span><span class="list-meta">+14%</span></li>
+                            <li class="list-item"><span>Total annonces</span><span class="list-meta">{{ total_appartements }}</span></li>
+                            <li class="list-item"><span>Disponibles</span><span class="list-meta">{{ disponibles }}</span></li>
+                            <li class="list-item"><span>Non disponibles</span><span class="list-meta">{{ indisponibles }}</span></li>
                         </ul>
                     </div>
                 </div>
@@ -174,7 +160,7 @@
                 <div class="panel">
                     <p class="panel-title">Astuce publication</p>
                     <div class="panel-body">
-                        <p class="list-meta">Ajoute 5 à 8 photos lumineuses et une description orientée quartier pour augmenter les prises de contact.</p>
+                        <p class="list-meta">Ajoutez une photo principale, le quartier exact et un prix net pour améliorer la qualité du catalogue.</p>
                     </div>
                 </div>
             </aside>

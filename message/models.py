@@ -1,8 +1,6 @@
 from django.db import models
-from django.db import models
 from django.conf import settings
 from appartement.models import Appartement
-from django.contrib.auth.models import User
 
 
 class Conversation(models.Model):
@@ -21,6 +19,9 @@ class Conversation(models.Model):
     )
 
     date_creation = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-date_creation']
 
     def __str__(self):
         return f"Conversation {self.id}"

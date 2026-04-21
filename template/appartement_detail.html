@@ -15,7 +15,7 @@
             <div class="panel-body">
                 {% if images %}
                 <img
-                    src="{{ images.0.image.url }}"
+                    src="{{ images.0.image_url_safe }}"
                     alt="{{ appartement.titre }}"
                     class="listing-image-lg"
                 >
@@ -24,16 +24,16 @@
                 <div class="cards gallery-grid">
                     {% for image in images %}
                     <img
-                        src="{{ image.image.url }}"
+                        src="{{ image.image_url_safe }}"
                         alt="Image {{ forloop.counter }}"
                         class="listing-image-sm"
                     >
                     {% endfor %}
                 </div>
                 {% endif %}
-                {% elif appartement.photo %}
+                {% elif appartement.photo_url_safe %}
                 <img
-                    src="{{ appartement.photo.url }}"
+                    src="{{ appartement.photo_url_safe }}"
                     alt="{{ appartement.titre }}"
                     class="listing-image-lg"
                 >

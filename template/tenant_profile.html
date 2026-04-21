@@ -11,9 +11,9 @@
     </header>
 
     <div class="cards">
-        <article class="card"><p class="card-label">Dossiers envoyés</p><p class="card-value">7</p><p class="card-trend">2 ce mois-ci</p></article>
-        <article class="card"><p class="card-label">Réponses reçues</p><p class="card-value">4</p><p class="card-trend">Taux de retour stable</p></article>
-        <article class="card"><p class="card-label">Messages non lus</p><p class="card-value">3</p><p class="card-trend">Réponse recommandée</p></article>
+        <article class="card"><p class="card-label">Favoris</p><p class="card-value">{{ favoris_count }}</p><p class="card-trend">Synchronisé avec la base</p></article>
+        <article class="card"><p class="card-label">Conversations</p><p class="card-value">{{ conversations_count }}</p><p class="card-trend">Fils ouverts</p></article>
+        <article class="card"><p class="card-label">Messages non lus</p><p class="card-value">{{ messages_non_lus }}</p><p class="card-trend">Réponse recommandée</p></article>
     </div>
 
     <div class="dashboard-grid">

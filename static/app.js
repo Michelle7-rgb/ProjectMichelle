@@ -157,28 +157,3 @@ document.addEventListener("keydown", (event) => {
 });
 
 setActiveLink(window.location.pathname);
-
-function sendMessage() {
-    const input = document.getElementById("msgInput");
-    const chat = document.getElementById("chatMessages");
-
-    if (!input || !chat) {
-        return;
-    }
-
-    if (input.value.trim() !== "") {
-        const msg = document.createElement("div");
-        msg.classList.add("message", "sent");
-        msg.innerText = input.value;
-        chat.appendChild(msg);
-        input.value = "";
-        chat.scrollTop = chat.scrollHeight;
-    }
-}
-
-document.addEventListener("submit", (event) => {
-    if (event.target && event.target.id === "chatForm") {
-        event.preventDefault();
-        sendMessage();
-    }
-});

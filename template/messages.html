@@ -5,46 +5,59 @@
     <header class="view-head">
         <div>
             <h2>Messagerie</h2>
-            <p>Échangez rapidement entre propriétaires, locataires et administration.</p>
+            <p>Retrouvez vos conversations réelles et ouvrez chaque fil pour répondre.</p>
         </div>
-        <span class="badge">2 conversations actives</span>
+        <span class="badge">{{ conversations|length }} conversations</span>
     </header>
 
     <div class="cards">
         <article class="card">
-            <p class="card-label">Réponses rapides</p>
-            <p class="card-value">12 min</p>
-            <p class="card-trend">Temps moyen récent</p>
+            <p class="card-label">Conversations actives</p>
+            <p class="card-value">{{ conversations|length }}</p>
+            <p class="card-trend">Fils accessibles</p>
         </article>
         <article class="card">
-            <p class="card-label">Non lus</p>
-            <p class="card-value">3</p>
-            <p class="card-trend">À traiter aujourd'hui</p>
+            <p class="card-label">Messages envoyés</p>
+            <p class="card-value">{{ user.message_set.count }}</p>
+            <p class="card-trend">Historique réel</p>
         </article>
         <article class="card">
-            <p class="card-label">Conversations</p>
-            <p class="card-value">8</p>
-            <p class="card-trend">Actives ce mois-ci</p>
+            <p class="card-label">Raccourci</p>
+            <p class="card-value">OK</p>
+            <p class="card-trend">Passez par un fil existant</p>
         </article>
     </div>
 
-    <div class="messages-container">
-        <aside class="conversations">
-            <p class="conversations-head">Conversations</p>
-            <div class="conversation-item active">Jean (Propriétaire)</div>
-            <div class="conversation-item">Marie (Locataire)</div>
-            <div class="conversation-item">Support Admin</div>
-        </aside>
-        <section class="chat">
-                   <div class="chat-head">Discussion avec Jean (Propriétaire)</div>
-            <div class="chat-messages" id="chatMessages">
-                <div class="message received">Bonjour, le bien est-il toujours disponible ?</div>
-            </div>
-            <form class="chat-input" id="chatForm">
-                <input type="text" id="msgInput" placeholder="Écrire un message...">
-                <button type="submit">Envoyer</button>
-            </form>
-        </section>
+    <div class="panel">
+        <p class="panel-title">Conversations récentes</p>
+        <div class="panel-body">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bien</th>
+                        <th>Locataire</th>
+                        <th>Propriétaire</th>
+                        <th>Dernière activité</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for conversation in conversations %}
+                    <tr>
+                        <td>{{ conversation.logement.titre }}</td>
+                        <td>{{ conversation.locataire.username }}</td>
+                        <td>{{ conversation.proprietaire.username }}</td>
+                        <td>{{ conversation.last_message_date|default:conversation.date_creation|timesince }}</td>
+                        <td><a href="{% url 'voir_conversation' conversation.id %}">Ouvrir</a></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">Aucune conversation active pour le moment.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </section>
 {% endblock %}

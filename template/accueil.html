@@ -301,7 +301,7 @@
             <a href="{% url 'accueil' %}" class="landing-brand">Logement</a>
             <nav class="landing-nav">
                 <a href="{% url 'accueil' %}">Accueil</a>
-                <a href="#catalog">Annonces</a>
+                <a href="{% url 'feed' %}">Annonces</a>
                 <a href="{% url 'login' %}" class="cta-login">Connexion</a>
                 <a href="{% url 'register' %}" class="cta-register">Creer un compte</a>
             </nav>
@@ -311,7 +311,7 @@
             <h1>Trouvez votre prochain appartement</h1>
             <p>Recherchez rapidement selon le quartier, le type de logement et votre budget mensuel.</p>
             <div class="search-strip">
-                <form class="search-form" action="{% url 'login' %}" method="get">
+                <form class="search-form" action="{% url 'feed' %}" method="get">
                     <input type="text" name="quartier" placeholder="Ville ou quartier (Akwa, Bastos...)" aria-label="Quartier">
                     <select name="type" aria-label="Type de logement">
                         <option value="">Type de logement</option>
@@ -329,7 +329,7 @@
         <section class="landing-content" id="catalog">
             <aside class="landing-side">
                 <div class="panel">
-                    <p class="panel-title">Mes favoris</p>
+                    <p class="panel-title">Biens en vedette</p>
                     <div class="panel-body">
                         <ul class="quick-list list-clean">
                             {% for appartement in appartements|slice:":3" %}
@@ -348,23 +348,10 @@
                 </div>
 
                 <div class="panel">
-                    <p class="panel-title">Messages recents</p>
+                    <p class="panel-title">Aperçu du support</p>
                     <div class="panel-body">
                         <ul class="quick-list list-clean">
-                            <li>
-                                <div>
-                                    <strong>Appartement T3</strong>
-                                    <span>Ok, a demain</span>
-                                </div>
-                                <span>1h</span>
-                            </li>
-                            <li>
-                                <div>
-                                    <strong>Studio meuble</strong>
-                                    <span>Disponibilite confirmee</span>
-                                </div>
-                                <span>3h</span>
-                            </li>
+                            <li><span>Connectez-vous pour accéder à vos conversations privées.</span></li>
                         </ul>
                     </div>
                 </div>
@@ -378,10 +365,8 @@
                 <div class="catalog-grid">
                     {% for appartement in appartements %}
                     <article class="catalog-item">
-                        {% if appartement.photo %}
-                        <img src="{{ appartement.photo.url }}" alt="{{ appartement.titre }}">
-                        {% elif appartement.images.all %}
-                        <img src="{{ appartement.images.all.0.image.url }}" alt="{{ appartement.titre }}">
+                        {% if appartement.primary_image_url %}
+                        <img src="{{ appartement.primary_image_url }}" alt="{{ appartement.titre }}">
                         {% else %}
                         <img src="https://images.unsplash.com/photo-1493666438817-866a91353ca9?auto=format&fit=crop&w=900&q=80" alt="Appartement">
                         {% endif %}

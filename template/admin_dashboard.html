@@ -13,12 +13,12 @@
     <div class="cards">
         <article class="card">
             <p class="card-label">Utilisateurs</p>
-            <p class="card-value">128</p>
+            <p class="card-value">{{ total_users }}</p>
             <p class="card-trend">Comptes actifs</p>
         </article>
         <article class="card">
             <p class="card-label">Annonces</p>
-            <p class="card-value">42</p>
+            <p class="card-value">{{ total_annonces }}</p>
             <p class="card-trend">Catalogue disponible</p>
         </article>
         <article class="card">
@@ -36,20 +36,23 @@
                     <tr>
                         <th>Titre</th>
                         <th>Auteur</th>
+                        <th>Quartier</th>
                         <th>Statut</th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for appartement in annonces_recentes %}
                     <tr>
-                        <td>Studio Yaoundé</td>
-                        <td>Jean N.</td>
-                        <td><span class="status warning">En attente</span></td>
+                        <td>{{ appartement.titre }}</td>
+                        <td>{{ appartement.proprietaire.username }}</td>
+                        <td>{{ appartement.quartier }}</td>
+                        <td><span class="status success">Publié</span></td>
                     </tr>
+                    {% empty %}
                     <tr>
-                        <td>Appartement Akwa</td>
-                        <td>Agence Delta</td>
-                        <td><span class="status success">Validé</span></td>
+                        <td colspan="4">Aucune annonce récente.</td>
                     </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>

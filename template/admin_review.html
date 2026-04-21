@@ -5,53 +5,68 @@
     <header class="view-head">
         <div>
             <h2>Dashboard Admin</h2>
-            <p>Validation et modération des annonces en attente.</p>
+            <p>Vue de supervision des annonces récentes et du volume de la plateforme.</p>
         </div>
-        <span class="badge">2 en attente</span>
+        <span class="badge">{{ total_annonces }} annonces</span>
     </header>
 
     <div class="cards">
         <article class="card">
-            <p class="card-label">À valider</p>
-            <p class="card-value">2</p>
-            <p class="card-trend">Annonces en attente</p>
+            <p class="card-label">Utilisateurs</p>
+            <p class="card-value">{{ total_users }}</p>
+            <p class="card-trend">Comptes actifs</p>
         </article>
         <article class="card">
-            <p class="card-label">Validées aujourd'hui</p>
-            <p class="card-value">8</p>
-            <p class="card-trend">Flux de contrôle stable</p>
+            <p class="card-label">Annonces</p>
+            <p class="card-value">{{ total_annonces }}</p>
+            <p class="card-trend">Catalogue publié</p>
         </article>
         <article class="card">
-            <p class="card-label">Signalements</p>
-            <p class="card-value">1</p>
-            <p class="card-trend">À examiner</p>
+            <p class="card-label">Dernières publications</p>
+            <p class="card-value">{{ appartements_recentes|length }}</p>
+            <p class="card-trend">À surveiller</p>
         </article>
     </div>
 
     <div class="panel">
-        <p class="panel-title">Annonces à modérer</p>
+        <p class="panel-title">Annonces récentes</p>
         <table>
             <thead>
                 <tr>
                     <th>Image</th>
                     <th>Titre</th>
                     <th>Propriétaire</th>
+                    <th>Quartier</th>
+                    <th>Publiée</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
+                {% for appartement in appartements_recentes %}
                 <tr>
-                    <td><img class="thumb" src="https://picsum.photos/seed/immo-3/120/80" alt="Annonce"></td>
-                    <td>Studio Yaoundé</td>
-                    <td>Jean N.</td>
+                    <td>
+                        {% if appartement.primary_image_url %}
+                        <img class="thumb" src="{{ appartement.primary_image_url }}" alt="{{ appartement.titre }}">
+                        {% else %}
+                        <div class="thumb"></div>
+                        {% endif %}
+                    </td>
+                    <td>{{ appartement.titre }}</td>
+                    <td>{{ appartement.proprietaire.username }}</td>
+                    <td>{{ appartement.quartier }}</td>
+                    <td>{{ appartement.date_publication|date:"d/m/Y" }}</td>
                     <td>
                         <div class="btn-row">
-                            <button type="button">Valider</button>
-                            <button class="btn-secondary">Refuser</button>
-                            <button class="btn-secondary">Supprimer</button>
+                            <a href="{% url 'appartement_detail' appartement.id %}" class="btn-secondary">Voir</a>
+                            <a href="{% url 'modifier_appartement' appartement.id %}" class="btn-secondary">Modifier</a>
                         </div>
                     </td>
                 </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">Aucune annonce disponible.</td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

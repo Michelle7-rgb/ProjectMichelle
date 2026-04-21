@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from .models import Profile
 
 
 User = get_user_model()
@@ -79,5 +80,9 @@ class RegisterForm(forms.Form):
             email=self.cleaned_data['email'],
             password=self.cleaned_data['password'],
             role=self.cleaned_data['role']
+        )
+        Profile.objects.create(
+            user=user,
+            phoneNuber=self.cleaned_data['phone']
         )
         return user

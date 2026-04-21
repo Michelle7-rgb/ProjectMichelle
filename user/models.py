@@ -12,11 +12,19 @@ class User(AbstractUser):
 
     role = models.CharField(
         max_length=20,
-        choices=ROLE_CHOICES
+        choices=ROLE_CHOICES,
+        default='CLIENT'
     )
 
     def __str__(self):
         return f"{self.username} ({self.role})"
+
+    @property
+    def phone(self):
+        profile = getattr(self, 'profile', None)
+        if profile and profile.phoneNuber:
+            return profile.phoneNuber
+        return ''
     
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

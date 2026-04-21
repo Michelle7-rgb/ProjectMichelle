@@ -12,19 +12,19 @@
 
     <div class="cards">
         <article class="card">
-            <p class="card-label">Annonces actives</p>
-            <p class="card-value">{{ appartements|length }}</p>
+            <p class="card-label">Annonces totales</p>
+            <p class="card-value">{{ total_appartements }}</p>
             <p class="card-trend">Biens publiés</p>
         </article>
         <article class="card">
-            <p class="card-label">Validées</p>
-            <p class="card-value">8</p>
-            <p class="card-trend">Taux de validation élevé</p>
+            <p class="card-label">Disponibles</p>
+            <p class="card-value">{{ disponibles }}</p>
+            <p class="card-trend">Affichées dans le feed</p>
         </article>
         <article class="card">
-            <p class="card-label">Demandes reçues</p>
-            <p class="card-value">24</p>
-            <p class="card-trend">Ce mois-ci</p>
+            <p class="card-label">Avec photos</p>
+            <p class="card-value">{{ avec_images }}</p>
+            <p class="card-trend">Annonces enrichies</p>
         </article>
     </div>
 
@@ -46,7 +46,13 @@
                         <td>{{ appartement.titre }}</td>
                         <td>{{ appartement.quartier }}</td>
                         <td>{{ appartement.prix }} FCFA</td>
-                        <td><span class="status success">Publié</span></td>
+                        <td>
+                            {% if appartement.disponible %}
+                            <span class="status success">Disponible</span>
+                            {% else %}
+                            <span class="status warning">Indisponible</span>
+                            {% endif %}
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
@@ -63,6 +69,7 @@
                 <div class="panel-body">
                     <ul class="list-clean">
                         <li class="list-item"><span>Nom</span><span class="list-meta">{{ user.username }}</span></li>
+                        <li class="list-item"><span>Téléphone</span><span class="list-meta">{{ user.phone|default:'Non renseigné' }}</span></li>
                         <li class="list-item"><span>Rôle</span><span class="status success">Propriétaire</span></li>
                         <li class="list-item"><span>Publication</span><span class="list-meta">Rythme stable</span></li>
                     </ul>

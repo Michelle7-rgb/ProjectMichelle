@@ -1,14 +1,14 @@
-import email
-from django.shortcuts import render
-from .models import User
+from django.shortcuts import render, redirect
+from django.db.models import Q
+
 from .forms import RegisterForm
+from favoris.models import Favoris
+from message.models import Conversation, Message
 
 # gestion de l'authentification
 
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib import messages
-from django.shortcuts import redirect
-from django.conf import settings
 
 
 
@@ -36,7 +36,7 @@ def register(request):
             user = form.save()  
             auth_login(request, user)  
             messages.success(request, "Compte créé avec succès !")
-            return redirect('login')
+            return redirect('feed')
     else:
         form = RegisterForm()  
 
@@ -56,8 +56,20 @@ def profil(request):
     
     utilisateur = request.user
 
+    conversations = Conversation.objects.filter(
+        Q(locataire=utilisateur) | Q(proprietaire=utilisateur)
+    )
+    favoris_count = Favoris.objects.filter(utilisateur=utilisateur).count()
+    messages_non_lus = Message.objects.filter(
+        conversation__in=conversations,
+        lu=False,
+    ).exclude(expediteur=utilisateur).count()
+
     context = {
-        "utilisateur": utilisateur
+        "utilisateur": utilisateur,
+        "favoris_count": favoris_count,
+        "conversations_count": conversations.count(),
+        "messages_non_lus": messages_non_lus,
     }
 
     return render(request, "tenant_profile.html", context)

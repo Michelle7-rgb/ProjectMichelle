@@ -1,6 +1,4 @@
 from django.shortcuts import render
-
-from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .models import Favoris
 
@@ -10,7 +8,7 @@ from .models import Favoris
 @login_required
 def mes_favoris(request):
 
-    favoris = Favoris.objects.filter(utilisateur=request.user)
+    favoris = Favoris.objects.filter(utilisateur=request.user).select_related('logement', 'utilisateur').order_by('-date_ajout')
 
     return render(request, 'tenant_favorites.html', {
         'favoris': favoris

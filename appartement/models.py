@@ -43,6 +43,24 @@ class Appartement(models.Model):
     def main_image(self):
      return self.images.filter(is_main=True).first()
 
+    @property
+    def photo_url_safe(self):
+        if self.photo and self.photo.name and self.photo.storage.exists(self.photo.name):
+            return self.photo.url
+        return ""
+
+    @property
+    def primary_image_url(self):
+        main = self.main_image()
+        if main and main.image_url_safe:
+            return main.image_url_safe
+
+        for image in self.images.all():
+            if image.image_url_safe:
+                return image.image_url_safe
+
+        return self.photo_url_safe
+
 
     def __str__(self):
         return self.titre
@@ -56,23 +74,11 @@ class AppartementImage(models.Model):
     image = models.ImageField(upload_to='appartements/')
     is_main = models.BooleanField(default=False)
 
+    @property
+    def image_url_safe(self):
+        if self.image and self.image.name and self.image.storage.exists(self.image.name):
+            return self.image.url
+        return ""
+
     def __str__(self):
         return f"Image - {self.appartement.titre}"
-
-
-
-class Favoris(models.Model): # Utilisez le singulier 'Favori' pour éviter les confusions
-    utilisateur = models.ForeignKey(
-        settings.AUTH_USER_MODEL, 
-        on_delete=models.CASCADE, 
-        related_name='mes_coups_de_coeur' # Nom unique pour éviter le clash
-    )
-    appartement = models.ForeignKey(
-        'Appartement', 
-        on_delete=models.CASCADE,
-        related_name='favorisé_par' # Nom unique ici aussi
-    )
-    date_ajout = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('utilisateur', 'appartement')
