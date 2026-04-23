@@ -4,56 +4,42 @@
 <section class="view">
     <header class="view-head">
         <div>
-            <h2>Liste des conversations</h2>
-            <p>Retrouvez tous vos échanges récents au même endroit.</p>
+            <h2>Espace Conversations</h2>
+            <p>Suivez vos échanges autour des biens dans une interface plus claire.</p>
         </div>
         <span class="badge">{{ conversations|length }} fils</span>
     </header>
 
-    <div class="cards">
-        <article class="card">
-            <p class="card-label">Conversations actives</p>
-            <p class="card-value">{{ conversations|length }}</p>
-            <p class="card-trend">Derniers échanges</p>
-        </article>
-        <article class="card">
-            <p class="card-label">Non lus</p>
-            <p class="card-value">2</p>
-            <p class="card-trend">À traiter</p>
-        </article>
-        <article class="card">
-            <p class="card-label">Temps moyen</p>
-            <p class="card-value">12 min</p>
-            <p class="card-trend">Réponse rapide</p>
-        </article>
-    </div>
-
-    <div class="panel">
-        <p class="panel-title">Toutes les conversations</p>
-        <table>
-            <thead>
-                <tr>
-                    <th>Bien</th>
-                    <th>Locataire</th>
-                    <th>Propriétaire</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
+    <div class="messages-shell">
+        <aside class="panel">
+            <p class="panel-title">Fils récents</p>
+            <div class="panel-body thread-list">
                 {% for conversation in conversations %}
-                <tr>
-                    <td>{{ conversation.logement.titre }}</td>
-                    <td>{{ conversation.locataire.username }}</td>
-                    <td>{{ conversation.proprietaire.username }}</td>
-                    <td><a href="{% url 'voir_conversation' conversation.id %}">Ouvrir</a></td>
-                </tr>
+                <a class="thread-item" href="{% url 'voir_conversation' conversation.id %}">
+                    <p class="thread-title">{{ conversation.logement.titre }}</p>
+                    <p class="thread-meta">{{ conversation.locataire.username }} ↔ {{ conversation.proprietaire.username }}</p>
+                    <p class="thread-time">Dernière activité: {{ conversation.last_message_date|default:conversation.date_creation|timesince }}</p>
+                </a>
                 {% empty %}
-                <tr>
-                    <td colspan="4">Aucune conversation disponible.</td>
-                </tr>
+                <div class="empty-state">
+                    <p>Aucune conversation disponible pour le moment.</p>
+                </div>
                 {% endfor %}
-            </tbody>
-        </table>
+            </div>
+        </aside>
+
+        <article class="chat-thread">
+            <header class="chat-thread-head">
+                <h3>Messagerie Logement</h3>
+                <p>Choisissez un fil à gauche pour afficher la discussion complète.</p>
+            </header>
+            <div class="chat-stream">
+                <div class="empty-state">
+                    <p>Votre boîte de conversation est prête.</p>
+                    <p>Ouvrez une annonce puis cliquez sur Contacter le propriétaire pour démarrer.</p>
+                </div>
+            </div>
+        </article>
     </div>
 </section>
 {% endblock %}

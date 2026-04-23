@@ -5,58 +5,70 @@
     <header class="view-head">
         <div>
             <h2>Conversation</h2>
-            <p>Échange détaillé autour d’un bien précis.</p>
+            <p>Échange en direct autour de {{ conversation.logement.titre }}.</p>
         </div>
         <span class="badge">En cours</span>
     </header>
 
-    <div class="dashboard-grid detail-grid">
-        <div class="panel">
-            <p class="panel-title">Messages</p>
-            <div class="panel-body">
-                <div class="stack">
-                    {% for message in messages %}
-                    <div class="panel">
-                        <div class="panel-body">
-                            <p class="list-meta">{{ message.expediteur.username }}</p>
-                            <p class="feed-text">{{ message.contenu }}</p>
-                        </div>
-                    </div>
-                    {% empty %}
-                    <p class="list-meta">Aucun message dans cette conversation.</p>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-
+    <div class="messages-shell">
         <aside class="stack">
             <div class="panel">
-                <p class="panel-title">Conversation liée</p>
+                <p class="panel-title">Participants</p>
                 <div class="panel-body">
-                    <ul class="list-clean">
-                        <li class="list-item"><span>Locataire</span><span class="list-meta">{{ conversation.locataire.username }}</span></li>
-                        <li class="list-item"><span>Propriétaire</span><span class="list-meta">{{ conversation.proprietaire.username }}</span></li>
-                        <li class="list-item"><span>Bien</span><span class="list-meta">{{ conversation.logement.titre }}</span></li>
-                    </ul>
+                    <div class="info-pills">
+                        <span class="info-pill">Locataire: {{ conversation.locataire.username }}</span>
+                        <span class="info-pill">Proprio: {{ conversation.proprietaire.username }}</span>
+                    </div>
                 </div>
             </div>
 
             <div class="panel">
-                <p class="panel-title">Répondre</p>
+                <p class="panel-title">Bien concerné</p>
                 <div class="panel-body">
-                    <form method="post" class="form-grid">
-                        {% csrf_token %}
-                        <div class="field span-all">
-                            <label for="contenu">Votre message</label>
-                            <textarea id="contenu" name="contenu" placeholder="Écrire un message..."></textarea>
-                        </div>
-                        <div class="btn-row span-all">
-                            <button type="submit">Envoyer</button>
-                        </div>
-                    </form>
+                    <p class="thread-title">{{ conversation.logement.titre }}</p>
+                    <p class="thread-meta">Consultez l'annonce liée pour revoir les détails.</p>
+                    <div class="btn-row" style="margin-top: 10px;">
+                        <a href="{% url 'appartement_detail' conversation.logement.id %}" class="link-reset"><button type="button" class="btn-secondary">Voir l'annonce</button></a>
+                        <a href="{% url 'liste_conversations' %}" class="link-reset"><button type="button" class="btn-secondary">Retour aux fils</button></a>
+                    </div>
                 </div>
             </div>
         </aside>
+
+        <article class="chat-thread">
+            <header class="chat-thread-head">
+                <h3>{{ conversation.logement.titre }}</h3>
+                <p>{{ conversation.locataire.username }} et {{ conversation.proprietaire.username }}</p>
+            </header>
+
+            <div class="chat-stream">
+                {% for message in messages %}
+                <div class="bubble {% if message.expediteur == user %}mine{% else %}theirs{% endif %}">
+                    <p class="bubble-author">{{ message.expediteur.username }}</p>
+                    <p class="bubble-text">{{ message.contenu }}</p>
+                    <p class="bubble-time">{{ message.date_envoi|date:"d/m/Y H:i" }}</p>
+                </div>
+                {% empty %}
+                <div class="empty-state">
+                    <p>Aucun message pour l'instant.</p>
+                    <p>Soyez le premier à envoyer un message.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="chat-compose">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="field">
+                        <label for="contenu">Votre message</label>
+                        <textarea id="contenu" name="contenu" placeholder="Écrire un message..." required></textarea>
+                    </div>
+                    <div class="btn-row">
+                        <button type="submit">Envoyer</button>
+                    </div>
+                </form>
+            </div>
+        </article>
     </div>
 </section>
 {% endblock %}

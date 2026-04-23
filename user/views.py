@@ -1,18 +1,25 @@
+"""
+User Authentication and Profile Views
+Handles login, registration, logout, and user profile management.
+"""
+
 from django.shortcuts import render, redirect
 from django.db.models import Q
+from django.contrib.auth import authenticate, login as auth_login, logout
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 from .forms import RegisterForm
 from favoris.models import Favoris
 from message.models import Conversation, Message
 
-# gestion de l'authentification
-
-from django.contrib.auth import authenticate, login as auth_login, logout
-from django.contrib import messages
-
-
 
 def login(request):
+    """
+    Handle user login.
+    Authenticates user credential and creates session.
+    Redirects to feed on success, redisplays form on failure.
+    """
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -30,30 +37,39 @@ def login(request):
 
 
 def register(request):
+    """
+    Handle user registration.
+    Creates new user account and authenticates immediately.
+    Redirects to feed after successful registration.
+    """
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()  
-            auth_login(request, user)  
+            user = form.save()
+            auth_login(request, user)
             messages.success(request, "Compte créé avec succès !")
             return redirect('feed')
     else:
-        form = RegisterForm()  
+        form = RegisterForm()
 
     return render(request, 'register.html', {'form': form})
 
 
 def logout_view(request):
+    """
+    Handle user logout.
+    Destroys user session and redirects to homepage.
+    """
     logout(request)
     return redirect('accueil')
 
 
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-
 @login_required
 def profil(request):
-    
+    """
+    Display user profile with summary statistics.
+    Shows favorites count, conversation count, and unread messages.
+    """
     utilisateur = request.user
 
     conversations = Conversation.objects.filter(

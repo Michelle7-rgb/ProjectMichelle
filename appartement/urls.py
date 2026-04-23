@@ -7,7 +7,7 @@ from .views import (
     modifier_appartement,
     supprimer_appartement,
     owner_listings,
-    dashboard_admin,
+    admin_panel,
 )
 
 urlpatterns = [
@@ -18,5 +18,5 @@ urlpatterns = [
     path("appartement/<int:id>/modifier/", modifier_appartement, name="modifier_appartement"),
     path("appartement/<int:id>/supprimer/", supprimer_appartement, name="supprimer_appartement"),
     path("prop/", owner_listings, name="owner_listings"),
-    path("ad/", dashboard_admin, name="admin_review"),
+    path("admin/", admin_panel, name="admin_review"),
 ]

@@ -5,59 +5,49 @@
     <header class="view-head">
         <div>
             <h2>Messagerie</h2>
-            <p>Retrouvez vos conversations réelles et ouvrez chaque fil pour répondre.</p>
+            <p>Vue d'ensemble de vos échanges, dans un style aligné avec l'accueil.</p>
         </div>
         <span class="badge">{{ conversations|length }} conversations</span>
     </header>
 
-    <div class="cards">
-        <article class="card">
-            <p class="card-label">Conversations actives</p>
-            <p class="card-value">{{ conversations|length }}</p>
-            <p class="card-trend">Fils accessibles</p>
-        </article>
-        <article class="card">
-            <p class="card-label">Messages envoyés</p>
-            <p class="card-value">{{ user.message_set.count }}</p>
-            <p class="card-trend">Historique réel</p>
-        </article>
-        <article class="card">
-            <p class="card-label">Raccourci</p>
-            <p class="card-value">OK</p>
-            <p class="card-trend">Passez par un fil existant</p>
-        </article>
-    </div>
+    <div class="messages-shell">
+        <aside class="panel">
+            <p class="panel-title">Conversations récentes</p>
+            <div class="panel-body thread-list">
+                {% for conversation in conversations %}
+                <a class="thread-item" href="{% url 'voir_conversation' conversation.id %}">
+                    <p class="thread-title">{{ conversation.logement.titre }}</p>
+                    <p class="thread-meta">{{ conversation.locataire.username }} ↔ {{ conversation.proprietaire.username }}</p>
+                    <p class="thread-time">{{ conversation.last_message_date|default:conversation.date_creation|timesince }}</p>
+                </a>
+                {% empty %}
+                <div class="empty-state">
+                    <p>Aucune conversation active pour le moment.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </aside>
 
-    <div class="panel">
-        <p class="panel-title">Conversations récentes</p>
-        <div class="panel-body">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Bien</th>
-                        <th>Locataire</th>
-                        <th>Propriétaire</th>
-                        <th>Dernière activité</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for conversation in conversations %}
-                    <tr>
-                        <td>{{ conversation.logement.titre }}</td>
-                        <td>{{ conversation.locataire.username }}</td>
-                        <td>{{ conversation.proprietaire.username }}</td>
-                        <td>{{ conversation.last_message_date|default:conversation.date_creation|timesince }}</td>
-                        <td><a href="{% url 'voir_conversation' conversation.id %}">Ouvrir</a></td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5">Aucune conversation active pour le moment.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        <article class="panel">
+            <p class="panel-title">Aperçu rapide</p>
+            <div class="panel-body">
+                <div class="cards" style="margin-bottom: 0;">
+                    <article class="card">
+                        <p class="card-label">Conversations actives</p>
+                        <p class="card-value">{{ conversations|length }}</p>
+                        <p class="card-trend">Fils accessibles</p>
+                    </article>
+                    <article class="card">
+                        <p class="card-label">Messages envoyés</p>
+                        <p class="card-value">{{ user.message_set.count }}</p>
+                        <p class="card-trend">Historique personnel</p>
+                    </article>
+                </div>
+                <div class="empty-state" style="margin-top: 12px;">
+                    <p>Ouvrez une conversation à gauche pour répondre rapidement.</p>
+                </div>
+            </div>
+        </article>
     </div>
 </section>
 {% endblock %}
