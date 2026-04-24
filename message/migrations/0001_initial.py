@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('appartement', '0004_favori'),
+        ('appartement', '0003_remove_appartementimage_statut'),
     ]
 
     operations = [

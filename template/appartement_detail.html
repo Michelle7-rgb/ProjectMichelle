@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block page_title %}Détail appartement - IMMOPro{% endblock %}
 {% block content %}
 <section class="view">
@@ -15,7 +16,7 @@
             <div class="panel-body">
                 {% if images %}
                 <img
-                    src="{{ images.0.image.url }}"
+                    src="{{ images.0.image_url_safe }}"
                     alt="{{ appartement.titre }}"
                     class="listing-image-lg"
                 >
@@ -24,16 +25,16 @@
                 <div class="cards gallery-grid">
                     {% for image in images %}
                     <img
-                        src="{{ image.image.url }}"
+                        src="{{ image.image_url_safe }}"
                         alt="Image {{ forloop.counter }}"
                         class="listing-image-sm"
                     >
                     {% endfor %}
                 </div>
                 {% endif %}
-                {% elif appartement.photo %}
+                {% elif appartement.photo_url_safe %}
                 <img
-                    src="{{ appartement.photo.url }}"
+                    src="{{ appartement.photo_url_safe }}"
                     alt="{{ appartement.titre }}"
                     class="listing-image-lg"
                 >
@@ -66,10 +67,32 @@
             </div>
 
             <div class="panel">
+                    <p class="panel-title">Signaler cette annonce</p>
+                    <div class="panel-body">
+                        {% if user.is_authenticated and user != appartement.proprietaire %}
+                        <form method="post" action="{% url 'appartement_detail' appartement.id %}">
+                            {% csrf_token %}
+                                {{ report_form|crispy }}
+                            <button type="submit" class="btn-secondary"> Signaler cette annonce</button>
+                        </form>
+                        {% elif user.is_authenticated %}
+                        <p class="list-meta">Vous êtes propriétaire de cette annonce.</p>
+                        {% else %}
+                        <p class="list-meta"><a href="{% url 'login' %}">Connectez-vous</a> pour signaler cette annonce.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="panel">
                 <p class="panel-title">Actions</p>
                 <div class="panel-body">
                     <div class="btn-row">
                         <a href="{% url 'feed' %}" class="link-reset"><button type="button" class="btn-secondary">Retour au feed</button></a>
+                        {% if user.is_authenticated and user != appartement.proprietaire %}
+                        <a href="{% url 'creer_conversation' appartement.id %}" class="link-reset"><button type="button" class="btn-contact">Contacter le propriétaire</button></a>
+                        {% elif not user.is_authenticated %}
+                        <a href="{% url 'login' %}" class="link-reset"><button type="button" class="btn-contact">Se connecter pour contacter</button></a>
+                        {% endif %}
                         {% if user.is_authenticated %}
                             {% if user.role == 'ADMIN' or user == appartement.proprietaire %}
                             <a href="{% url 'modifier_appartement' appartement.id %}" class="link-reset"><button type="button">Modifier</button></a>

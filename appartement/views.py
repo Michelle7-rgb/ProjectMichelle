@@ -1,25 +1,43 @@
-from django.shortcuts import render
-from .models import Appartement, AppartementImage
-from django.shortcuts import get_object_or_404, redirect
+"""
+Apartment Management Views
+Handles apartment listings, details, creation, modification and deletion.
+"""
+
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.core.exceptions import PermissionDenied
+from django.db.models import Q, Max
 
-# gestion des vues pour l'application appartement
+from favoris.models import Favoris
+from message.models import Conversation, Message
+from user.forms import AdminUserForm
+from user.models import User
+from .models import Appartement, AppartementImage
+from .forms import SignalementForm
 
-#accueil
+
 def accueil(request):
-    # Si l'utilisateur est connecté, redirige vers le feed
+    """
+    Display public homepage with available apartments.
+    Redirects authenticated users to feed.
+    """
     if request.user.is_authenticated:
         return redirect('feed')
 
-    # Sinon, affiche la page d'accueil publique
-    appartements = Appartement.objects.filter(disponible=True)
+    appartements = Appartement.objects.filter(
+        disponible=True,
+        moderation_status='APPROVED',
+    ).select_related('proprietaire').prefetch_related('images')
     return render(request, 'accueil.html', {'appartements': appartements})
 
 
-# gestion des appartements
-from django.core.exceptions import PermissionDenied
-
 def ajouter_appartement(request):
+    """
+    Create a new apartment listing.
+    Requires user to be authenticated as property owner.
+    Accepts POST with apartment details and multiple images.
+    """
     if not request.user.is_authenticated or request.user.role != 'PROPRIETAIRE':
         raise PermissionDenied
 
@@ -32,9 +50,9 @@ def ajouter_appartement(request):
             description=request.POST.get('description'),
             proprietaire=request.user,
             contact_proprietaire=request.POST.get('contact'),
+            moderation_status='PENDING',
         )
 
-        # images multiples
         for file in request.FILES.getlist('images'):
             AppartementImage.objects.create(
                 appartement=appartement,
@@ -45,26 +63,38 @@ def ajouter_appartement(request):
 
     return render(request, 'owner_publish.html')
 
+
 def supprimer_appartement(request, id):
+    """
+    Delete an apartment listing.
+    Only owner or admin can delete.
+    """
     appartement = get_object_or_404(Appartement, id=id)
 
-    if request.user != appartement.proprietaire:
+    if request.user != appartement.proprietaire and request.user.role != 'ADMIN':
         raise PermissionDenied
 
     appartement.delete()
     return redirect('feed')
- 
+
 
 def modifier_appartement(request, id):
+    """
+    Update apartment details.
+    Only owner or admin can modify.
+    Non-admin modifications trigger re-moderation.
+    """
     appartement = get_object_or_404(Appartement, id=id)
 
-    if request.user != appartement.proprietaire:
+    if request.user != appartement.proprietaire and request.user.role != 'ADMIN':
         raise PermissionDenied
 
     if request.method == 'POST':
         appartement.titre = request.POST.get('titre')
         appartement.prix = request.POST.get('prix')
         appartement.description = request.POST.get('description')
+        if request.user.role != 'ADMIN':
+            appartement.moderation_status = 'PENDING'
         appartement.save()
 
         return redirect('appartement_detail', pk=appartement.id)
@@ -73,16 +103,40 @@ def modifier_appartement(request, id):
 
 
 def appartement_detail(request, pk):
+    """
+    Display apartment details and enable reporting.
+    Any authenticated user can report inappropriate listings.
+    """
     appartement = get_object_or_404(Appartement, pk=pk)
-    images = appartement.images.all()
+    images = [image for image in appartement.images.all() if image.image_url_safe]
+    report_form = SignalementForm()
+
+    if request.method == 'POST' and request.user.is_authenticated:
+        report_form = SignalementForm(request.POST)
+        if report_form.is_valid():
+            signalement = report_form.save(commit=False)
+            signalement.appartement = appartement
+            signalement.auteur = request.user
+            signalement.save()
+            messages.success(request, 'Signalement envoyé à la modération.')
+            return redirect('appartement_detail', pk=appartement.id)
 
     return render(request, 'appartement_detail.html', {
         'appartement': appartement,
-        'images': images
+        'images': images,
+        'report_form': report_form
     })
 
+
 def liste_appartements(request):
-    appartements = Appartement.objects.filter(disponible=True)
+    """
+    List all available apartments with optional filtering.
+    Filters by: neighborhood (quartier), type, and max price.
+    """
+    appartements = Appartement.objects.filter(
+        disponible=True,
+        moderation_status='APPROVED',
+    ).select_related('proprietaire').prefetch_related('images')
 
     quartier = request.GET.get('quartier')
     type_logement = request.GET.get('type')
@@ -97,22 +151,21 @@ def liste_appartements(request):
     if prix_max:
         appartements = appartements.filter(prix__lte=prix_max)
 
-    context = {
-        'appartements': appartements
-    }
-    return render(request, 'feed.html', context)
+    return render(request, 'feed.html', {'appartements': appartements})
+
 
 @login_required(login_url='login')
 def feed(request):
     """
-    Affiche la liste des appartements pour les utilisateurs connectés.
-    Permet aux propriétaires de gérer leurs appartements.
+    Display filtered apartment listings for authenticated users.
+    Shows user's recent favorites and messages in sidebar.
+    Supports filtering by neighborhood, type, and max price.
     """
+    appartements = Appartement.objects.filter(
+        disponible=True,
+        moderation_status='APPROVED',
+    ).select_related('proprietaire').prefetch_related('images')
 
-    # Récupérer tous les appartements disponibles
-    appartements = Appartement.objects.filter(disponible=True)
-
-    # --- FILTRAGE ---
     quartier = request.GET.get('quartier')
     type_logement = request.GET.get('type')
     prix_max = request.GET.get('prix')
@@ -126,85 +179,161 @@ def feed(request):
             prix_max = float(prix_max)
             appartements = appartements.filter(prix__lte=prix_max)
         except ValueError:
-            pass  # ignore si mauvais format
+            pass
 
-    # --- Gestion propriétaire ---
-    proprietaire = request.user
-    user_is_owner = hasattr(proprietaire, 'role') and proprietaire.role == 'PROPRIETAIRE'
+    recent_messages = []
+    mes_favoris = []
 
-    context = {
+    if request.user.is_authenticated:
+        mes_favoris = (
+            Favoris.objects.filter(utilisateur=request.user)
+            .select_related('logement', 'logement__proprietaire')
+            .order_by('-date_ajout')[:3]
+        )
+        recent_messages = (
+            Message.objects.filter(Q(conversation__locataire=request.user) | Q(conversation__proprietaire=request.user))
+            .select_related('conversation', 'conversation__logement', 'expediteur')
+            .order_by('-date_envoi')[:3]
+        )
+
+    return render(request, 'feed.html', {
         'appartements': appartements,
-        'user_is_owner': user_is_owner,
-    }
-
-    return render(request, 'feed.html', context)
-
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import get_user_model
-from .models import Appartement, Favoris
-
-User = get_user_model()
-
-@login_required
-def dashboard_locataire(request):
-    # Utilisation du bon modèle de favoris et du bon champ de date
-    mes_favoris = Favoris.objects.filter(utilisateur=request.user)
-    return render(request, 'dashboard_locataire.html', {'favoris': mes_favoris})
-
-def admin_dashboard(request):
-    return render(request, 'admin_dashboard.html')
-
-def message(request):
-    return render(request, 'message.html')
-
-
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from .models import Appartement 
-
-@login_required
-def dashboard_proprietaire(request):
-    # On récupère seulement les appartements de la personne connectée
-    mes_appartements = Appartement.objects.filter(
-        proprietaire=request.user
-    ).order_by('-date_publication')
-    
-    return render(request, 'dashboard_proprietaire.html', {
-        'appartements': mes_appartements
+        'mes_favoris': mes_favoris,
+        'recent_messages': recent_messages,
     })
 
 
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+@login_required
+def dashboard_locataire(request):
+    """
+    Display tenant dashboard with favorites and conversation metrics.
+    """
+    mes_favoris = Favoris.objects.filter(utilisateur=request.user).select_related('logement').order_by('-date_ajout')
+    favoris_disponibles = mes_favoris.filter(logement__disponible=True).count()
+    messages_non_lus = Message.objects.filter(
+        conversation__in=Conversation.objects.filter(Q(locataire=request.user) | Q(proprietaire=request.user)),
+        lu=False,
+    ).exclude(expediteur=request.user).count()
 
-
-from appartement.models import Appartement
-from django.contrib.auth import get_user_model
-User = get_user_model()
-
+    return render(request, 'dashboard_locataire.html', {
+        'favoris': mes_favoris,
+        'favoris_count': mes_favoris.count(),
+        'favoris_disponibles': favoris_disponibles,
+        'conversations_count': Conversation.objects.filter(Q(locataire=request.user) | Q(proprietaire=request.user)).count(),
+        'messages_non_lus': messages_non_lus,
+    })
 
 
 @login_required
-def dashboard_admin(request):
-    
-    # Compter les éléments importants
+def dashboard_proprietaire(request):
+    """
+    Display property owner dashboard with listings and statistics.
+    """
+    mes_appartements = Appartement.objects.filter(
+        proprietaire=request.user
+    ).select_related('proprietaire').prefetch_related('images').order_by('-date_publication')
+
+    total = mes_appartements.count()
+    disponibles = mes_appartements.filter(disponible=True).count()
+    avec_images = mes_appartements.filter(images__isnull=False).distinct().count()
+
+    return render(request, 'dashboard_proprietaire.html', {
+        'appartements': mes_appartements,
+        'total_appartements': total,
+        'disponibles': disponibles,
+        'avec_images': avec_images,
+    })
+
+
+@login_required
+def admin_dashboard(request):
+    """
+    Display admin overview dashboard with system statistics.
+    """
     total_users = User.objects.count()
     total_annonces = Appartement.objects.count()
-    
+    annonces_recentes = Appartement.objects.select_related('proprietaire').order_by('-date_publication')[:5]
 
-    # Dernières annonces ajoutées
-    Appartements_recentes = Appartement.objects.all().order_by('-date_publication')[:5]
-
-    context = {
+    return render(request, 'admin_dashboard.html', {
         'total_users': total_users,
-        'total_Appartement': Appartement,
-        'Appartement_recentes': Appartement,
-    }
+        'total_annonces': total_annonces,
+        'annonces_recentes': annonces_recentes,
+    })
 
-    return render(request, 'admin_review.html', context)
 
+def message(request):
+    """
+    Redirect to conversations list.
+    """
+    return redirect('liste_conversations')
+
+
+@login_required
+def admin_panel(request):
+    """
+    Administration panel for managing users, apartments, and reports.
+    Handles approval/rejection of listings and resolution of user reports.
+    """
+    if request.user.role != 'ADMIN' and not request.user.is_superuser:
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'create_user':
+            user_form = AdminUserForm(request.POST, prefix='user')
+            if user_form.is_valid():
+                user_form.save()
+                messages.success(request, "Utilisateur créé avec succès.")
+                return redirect('admin_panel')
+        elif action == 'delete_user':
+            target_user = get_object_or_404(User, id=request.POST.get('user_id'))
+            if target_user != request.user and not target_user.is_superuser:
+                target_user.delete()
+                messages.success(request, "Utilisateur supprimé.")
+                return redirect('admin_panel')
+        elif action in {'approve_appartement', 'reject_appartement'}:
+            appartement = get_object_or_404(Appartement, id=request.POST.get('appartement_id'))
+            appartement.moderation_status = 'APPROVED' if action == 'approve_appartement' else 'REJECTED'
+            appartement.save(update_fields=['moderation_status'])
+            messages.success(request, "Statut de l'annonce mis à jour.")
+            return redirect('admin_panel')
+        elif action in {'review_signalement', 'resolve_signalement'}:
+            signalement = get_object_or_404(Appartement.signalements.rel.model, id=request.POST.get('signalement_id'))
+            signalement.statut = 'REVIEWED' if action == 'review_signalement' else 'RESOLVED'
+            signalement.note_admin = request.POST.get('note_admin', signalement.note_admin)
+            signalement.save(update_fields=['statut', 'note_admin'])
+            messages.success(request, "Signalement traité.")
+            return redirect('admin_panel')
+
+    user_form = AdminUserForm(prefix='user')
+    pending_appartements = Appartement.objects.filter(moderation_status='PENDING').select_related('proprietaire').prefetch_related('images').order_by('-date_publication')
+    recent_appartements = Appartement.objects.select_related('proprietaire').prefetch_related('images').order_by('-date_publication')[:10]
+    signalements = Appartement.signalements.rel.model.objects.select_related('appartement', 'auteur').order_by('-date_creation')[:10]
+    users = User.objects.order_by('-date_joined')
+
+    return render(request, 'admin_review.html', {
+        'total_users': User.objects.count(),
+        'total_annonces': Appartement.objects.count(),
+        'pending_count': pending_appartements.count(),
+        'reports_open_count': signalements.filter(statut='OPEN').count(),
+        'pending_appartements': pending_appartements,
+        'recent_appartements': recent_appartements,
+        'signalements': signalements,
+        'users': users,
+        'user_form': user_form,
+    })
+
+
+@login_required
 def owner_listings(request):
-    return render(request, "owner_listings.html")
+    """
+    Display owner's apartment listings with availability status.
+    """
+    appartements = Appartement.objects.filter(proprietaire=request.user).select_related('proprietaire').prefetch_related('images').order_by('-date_publication')
+    return render(request, "owner_listings.html", {
+        'appartements': appartements,
+        'total_appartements': appartements.count(),
+        'disponibles': appartements.filter(disponible=True).count(),
+        'indisponibles': appartements.filter(disponible=False).count(),
+    })

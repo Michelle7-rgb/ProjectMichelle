@@ -26,7 +26,7 @@
         <div class="panel-body">
             <div class="btn-row">
                 <a href="{% url 'owner_publish' %}" class="link-reset">
-                    <button type="button">➕ Ajouter un appartement</button>
+                    <button type="button">+ Ajouter un appartement</button>
                 </a>
             </div>
         </div>
@@ -39,11 +39,11 @@
                 <p class="panel-title">Mes favoris</p>
                 <div class="panel-body">
                     <ul class="list-clean">
-                        {% for appartement in appartements|slice:":3" %}
+                        {% for favori in mes_favoris %}
                         <li class="list-item compact-item">
                             <div>
-                                <p class="compact-title">{{ appartement.titre|truncatechars:23 }}</p>
-                                <p class="list-meta">{{ appartement.prix }} FCFA</p>
+                                <p class="compact-title">{{ favori.logement.titre|truncatechars:23 }}</p>
+                                <p class="list-meta">{{ favori.logement.prix }} FCFA</p>
                             </div>
                             <span class="heart">❤</span>
                         </li>
@@ -58,28 +58,25 @@
                 <p class="panel-title">Messages récents</p>
                 <div class="panel-body">
                     <ul class="list-clean">
+                        {% for message in recent_messages %}
                         <li class="list-item compact-item">
                             <div>
-                                <p class="compact-title">Appartement T3</p>
-                                <p class="list-meta">Ok, à demain</p>
+                                <p class="compact-title">{{ message.conversation.logement.titre }}</p>
+                                <p class="list-meta">{{ message.contenu|truncatechars:38 }}</p>
                             </div>
-                            <span class="list-meta">1h</span>
+                            <span class="list-meta">{{ message.date_envoi|timesince }}</span>
                         </li>
-                        <li class="list-item compact-item">
-                            <div>
-                                <p class="compact-title">Studio meublé</p>
-                                <p class="list-meta">Disponibilité confirmée</p>
-                            </div>
-                            <span class="list-meta">3h</span>
-                        </li>
+                        {% empty %}
+                        <li class="list-meta">Aucun message récent.</li>
+                        {% endfor %}
                     </ul>
                 </div>
             </div>
 
             <div class="panel city-band">
                 <div class="city-band-overlay">
-                    <p>Appartement lumineux</p>
-                    <span>Inspiration</span>
+                    <p>Catalogue actif</p>
+                    <span>Vue en direct du catalogue</span>
                 </div>
             </div>
         </aside>
@@ -97,15 +94,9 @@
             <div class="feed-cards-grid">
                 {% for appartement in appartements %}
                 <article class="card feed-card">
-                    {% if appartement.images.all %}
+                    {% if appartement.primary_image_url %}
                     <img
-                        src="{{ appartement.images.all.0.image.url }}"
-                        alt="{{ appartement.titre }}"
-                        class="feed-card-image"
-                    >
-                    {% elif appartement.photo %}
-                    <img
-                        src="{{ appartement.photo.url }}"
+                        src="{{ appartement.primary_image_url }}"
                         alt="{{ appartement.titre }}"
                         class="feed-card-image"
                     >
