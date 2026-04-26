@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
-{% block page_title %}Feed - IMMOPro{% endblock %}
+{% block page_title %}Fil d'actualite - Logement{% endblock %}
 {% block content %}
 <section class="view">
-    <section class="feed-hero panel">
+    <section class="feed-hero">
         <div class="feed-hero-inner">
-            <h2>Trouvez votre prochain appartement</h2>
-            <p>Ville, type de logement, prix et quartier en quelques clics.</p>
+            <h2>Trouvez un logement comme sur un vrai fil social</h2>
+            <p>Recherche rapide, annonces visuelles et contact instantane avec le proprietaire.</p>
             <form class="feed-search" method="get" action="{% url 'feed' %}">
                 <input type="text" name="quartier" value="{{ request.GET.quartier|default:'' }}" placeholder="Ville / quartier">
                 <select name="type">
@@ -15,8 +15,8 @@
                     <option value="maison" {% if request.GET.type == 'maison' %}selected{% endif %}>Maison</option>
                     <option value="chambre" {% if request.GET.type == 'chambre' %}selected{% endif %}>Chambre</option>
                 </select>
-                <input type="number" name="prix" value="{{ request.GET.prix|default:'' }}" placeholder="Prix max (FCFA)">
-                <button type="submit">Rechercher</button>
+                <input type="number" name="prix" value="{{ request.GET.prix|default:'' }}" placeholder="Budget max FCFA">
+                <button type="submit">Filtrer</button>
             </form>
         </div>
     </section>
@@ -25,9 +25,8 @@
     <div class="panel panel-spaced">
         <div class="panel-body">
             <div class="btn-row">
-                <a href="{% url 'owner_publish' %}" class="link-reset">
-                    <button type="button">+ Ajouter un appartement</button>
-                </a>
+                <a href="{% url 'owner_publish' %}" class="link-reset"><button type="button">+ Publier une annonce</button></a>
+                <a href="{% url 'owner_listings' %}" class="link-reset"><button type="button" class="btn-secondary">Gerer mes annonces</button></a>
             </div>
         </div>
     </div>
@@ -36,13 +35,24 @@
     <div class="feed-layout">
         <aside class="feed-left stack">
             <div class="panel">
+                <p class="panel-title">Tableau premium</p>
+                <div class="panel-body">
+                    <ul class="list-clean">
+                        <li class="list-item"><span>Total annonces</span><span class="list-meta">{{ paginator.count }}</span></li>
+                        <li class="list-item"><span>Annonces / page</span><span class="list-meta">15</span></li>
+                        <li class="list-item"><span>Page actuelle</span><span class="list-meta">{{ page_obj.number }}/{{ paginator.num_pages }}</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="panel">
                 <p class="panel-title">Mes favoris</p>
                 <div class="panel-body">
                     <ul class="list-clean">
                         {% for favori in mes_favoris %}
                         <li class="list-item compact-item">
                             <div>
-                                <p class="compact-title">{{ favori.logement.titre|truncatechars:23 }}</p>
+                                <p class="compact-title">{{ favori.logement.titre|truncatechars:26 }}</p>
                                 <p class="list-meta">{{ favori.logement.prix }} FCFA</p>
                             </div>
                             <span class="heart">❤</span>
@@ -54,73 +64,52 @@
                 </div>
             </div>
 
-            <div class="panel">
-                <p class="panel-title">Messages récents</p>
-                <div class="panel-body">
-                    <ul class="list-clean">
-                        {% for message in recent_messages %}
-                        <li class="list-item compact-item">
-                            <div>
-                                <p class="compact-title">{{ message.conversation.logement.titre }}</p>
-                                <p class="list-meta">{{ message.contenu|truncatechars:38 }}</p>
-                            </div>
-                            <span class="list-meta">{{ message.date_envoi|timesince }}</span>
-                        </li>
-                        {% empty %}
-                        <li class="list-meta">Aucun message récent.</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-
             <div class="panel city-band">
                 <div class="city-band-overlay">
-                    <p>Catalogue actif</p>
-                    <span>Vue en direct du catalogue</span>
+                    <p>Particularite: Score confiance</p>
+                    <span>Chaque annonce affiche un niveau de fiabilite avant prise de contact.</span>
                 </div>
             </div>
         </aside>
 
-        <div class="feed-main">
+        <div class="feed-main stack">
             <header class="view-head feed-main-head">
                 <div>
-                    <h2>Annonces disponibles</h2>
-                    <p>Découvrez les appartements disponibles et leurs détails.</p>
+                    <h2>Fil des annonces disponibles</h2>
+                    <p>Selection epuree pour une lecture plus premium en desktop.</p>
                 </div>
-                <span class="badge">{{ appartements|length }} annonces</span>
+                <span class="badge">{{ paginator.count }} publications</span>
             </header>
 
             {% if appartements %}
             <div class="feed-cards-grid">
                 {% for appartement in appartements %}
                 <article class="card feed-card">
-                    {% if appartement.primary_image_url %}
-                    <img
-                        src="{{ appartement.primary_image_url }}"
-                        alt="{{ appartement.titre }}"
-                        class="feed-card-image"
-                    >
-                    {% else %}
-                    <div class="panel feed-card-image empty-card-image">
-                        <p class="list-meta">Pas d'image</p>
+                    <div class="feed-card-head">
+                        <div>
+                            <p class="feed-card-meta">{{ appartement.type_logement|title }} · {{ appartement.quartier }}</p>
+                            <h3 class="feed-card-title">{{ appartement.titre }}</h3>
+                        </div>
+                        <span class="badge">Score confiance 92%</span>
                     </div>
+
+                    {% if appartement.primary_image_url %}
+                    <img src="{{ appartement.primary_image_url }}" alt="{{ appartement.titre }}" class="feed-card-image">
+                    {% else %}
+                    <div class="panel feed-card-image empty-card-image"><p class="list-meta">Pas d'image disponible</p></div>
                     {% endif %}
 
-                    <p class="card-label">{{ appartement.type_logement|title }} · {{ appartement.quartier }}</p>
-                    <h3 class="feed-card-title">{{ appartement.titre }}</h3>
                     <p class="feed-card-price">{{ appartement.prix }} FCFA <span>/ mois</span></p>
+                    <p class="feed-card-meta">Publie dans le fil public, pret pour conversation instantanee.</p>
 
-                    <div class="btn-row bump">
-                        <a href="{% url 'appartement_detail' appartement.id %}" class="link-reset">
-                            <button type="button">Voir</button>
-                        </a>
+                    <div class="feed-actions">
+                        <a href="{% url 'appartement_detail' appartement.id %}" class="link-reset"><button type="button">Voir details</button></a>
+                        <span class="stat-pill">{{ appartement.date_publication|timesince }} dans le feed</span>
+                        <span class="stat-pill">Reponse rapide activee</span>
 
                         {% if user.is_authenticated %}
                         {% if user.role == 'ADMIN' or user == appartement.proprietaire %}
-                        <a href="{% url 'modifier_appartement' appartement.id %}" class="link-reset">
-                            <button type="button" class="btn-secondary">Modifier</button>
-                        </a>
-
+                        <a href="{% url 'modifier_appartement' appartement.id %}" class="link-reset"><button type="button" class="btn-secondary">Modifier</button></a>
                         <form method="post" action="{% url 'supprimer_appartement' appartement.id %}" onsubmit="return confirm('Supprimer cet appartement ?');">
                             {% csrf_token %}
                             <button type="submit" class="btn-secondary">Supprimer</button>
@@ -134,12 +123,23 @@
 
             <div class="feed-pagination panel">
                 <div class="panel-body">
-                    <button type="button" class="btn-secondary">‹</button>
-                    <button type="button" class="is-active">1</button>
-                    <button type="button" class="btn-secondary">2</button>
-                    <button type="button" class="btn-secondary">3</button>
-                    <button type="button" class="btn-secondary">4</button>
-                    <button type="button" class="btn-secondary">›</button>
+                    {% if page_obj.has_previous %}
+                    <a href="?{{ pagination_prefix }}page={{ page_obj.previous_page_number }}" class="btn-secondary">‹</a>
+                    {% endif %}
+
+                    {% for label in visible_pages %}
+                        {% if label == '…' %}
+                        <span class="pagination-gap">…</span>
+                        {% elif label == page_obj.number %}
+                        <span class="is-active">{{ label }}</span>
+                        {% else %}
+                        <a href="?{{ pagination_prefix }}page={{ label }}" class="btn-secondary">{{ label }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                    <a href="?{{ pagination_prefix }}page={{ page_obj.next_page_number }}" class="btn-secondary">›</a>
+                    {% endif %}
                 </div>
             </div>
             {% else %}

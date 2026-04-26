@@ -5,384 +5,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil - Logement</title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'app.css' %}">
-    <style>
-        .landing {
-            min-height: 100vh;
-            background:
-                linear-gradient(180deg, rgba(26, 47, 90, 0.88), rgba(26, 47, 90, 0.62)),
-                linear-gradient(160deg, rgba(44, 139, 118, 0.16), transparent 50%),
-                url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1800&q=80') center/cover no-repeat;
-            padding: 26px 24px 30px;
-        }
-
-        .landing-shell {
-            max-width: 1220px;
-            margin: 0 auto;
-            background: rgba(248, 251, 255, 0.94);
-            border: 1px solid rgba(223, 230, 242, 0.8);
-            border-radius: 22px;
-            overflow: hidden;
-            box-shadow: 0 24px 56px rgba(13, 24, 48, 0.3);
-        }
-
-        .landing-topbar {
-            background: linear-gradient(115deg, var(--brand-navy) 0%, var(--brand-navy-deep) 100%);
-            color: #f0f5ff;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            padding: 16px 22px;
-        }
-
-        .landing-brand {
-            font-family: var(--font-heading);
-            font-size: 2rem;
-            color: #ffffff;
-            text-decoration: none;
-        }
-
-        .landing-nav {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .landing-nav a {
-            text-decoration: none;
-            color: #e9f0ff;
-            padding: 7px 12px;
-            border-radius: 999px;
-            border: 1px solid transparent;
-            font-size: 0.92rem;
-            font-weight: 600;
-        }
-
-        .landing-nav a:hover {
-            background: rgba(255, 255, 255, 0.14);
-            border-color: rgba(255, 255, 255, 0.24);
-        }
-
-        .landing-nav .cta-login {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.28);
-        }
-
-        .landing-nav .cta-register {
-            background: var(--primary);
-            color: #fff;
-            border-color: transparent;
-        }
-
-        .landing-hero {
-            padding: 56px 26px 40px;
-            background:
-                linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.98)),
-                url('https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?auto=format&fit=crop&w=1500&q=80') center/cover no-repeat;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .landing-hero h1 {
-            text-align: center;
-            color: var(--brand-navy-deep);
-            font-size: clamp(1.85rem, 4vw, 2.8rem);
-            margin-bottom: 10px;
-        }
-
-        .landing-hero p {
-            text-align: center;
-            color: var(--text-muted);
-            max-width: 750px;
-            margin: 0 auto 18px;
-            font-size: 0.98rem;
-        }
-
-        .search-strip {
-            max-width: 980px;
-            margin: 0 auto;
-            padding: 12px;
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            background: #ffffff;
-            box-shadow: var(--shadow);
-        }
-
-        .search-form {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr 1fr auto;
-            gap: 10px;
-        }
-
-        .search-form input,
-        .search-form select {
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 11px 12px;
-            font-size: 0.94rem;
-            background: #fff;
-            color: var(--text);
-        }
-
-        .search-form button {
-            min-width: 150px;
-            background: var(--primary);
-        }
-
-        .landing-content {
-            padding: 24px;
-            display: grid;
-            grid-template-columns: 265px minmax(0, 1fr);
-            gap: 18px;
-        }
-
-        .landing-side {
-            display: grid;
-            gap: 14px;
-            align-content: start;
-        }
-
-        .quick-list li {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            padding: 9px 0;
-            gap: 8px;
-            font-size: 0.9rem;
-        }
-
-        .quick-list li:last-child {
-            border-bottom: 0;
-        }
-
-        .quick-list strong {
-            color: var(--brand-navy-deep);
-            font-size: 0.9rem;
-        }
-
-        .quick-list span {
-            color: var(--text-muted);
-            font-size: 0.8rem;
-        }
-
-        .catalog-head {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .catalog-head h2 {
-            color: var(--brand-navy-deep);
-            font-size: 1.45rem;
-        }
-
-        .catalog-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
-            gap: 14px;
-        }
-
-        .catalog-item {
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            background: #ffffff;
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .catalog-item img {
-            width: 100%;
-            height: 142px;
-            object-fit: cover;
-        }
-
-        .catalog-item-body {
-            padding: 12px;
-        }
-
-        .catalog-item-body h3 {
-            font-size: 1.07rem;
-            margin-bottom: 7px;
-            color: var(--brand-navy-deep);
-        }
-
-        .catalog-item-body .meta {
-            color: var(--text-muted);
-            font-size: 0.84rem;
-            margin-bottom: 8px;
-        }
-
-        .catalog-item-body .price {
-            color: var(--primary);
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .catalog-item-body .desc {
-            color: var(--text-muted);
-            font-size: 0.84rem;
-            margin-bottom: 9px;
-            min-height: 34px;
-        }
-
-        .catalog-item-body a {
-            text-decoration: none;
-            color: var(--brand-navy);
-            font-weight: 700;
-            font-size: 0.86rem;
-        }
-
-        .landing-footer {
-            padding: 16px 22px;
-            background: linear-gradient(110deg, var(--brand-navy-deep) 0%, var(--brand-navy) 100%);
-            color: rgba(236, 242, 255, 0.92);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            font-size: 0.86rem;
-        }
-
-        .landing-footer-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 14px;
-        }
-
-        .landing-footer a {
-            color: rgba(236, 242, 255, 0.9);
-            text-decoration: none;
-        }
-
-        @media (max-width: 1000px) {
-            .search-form {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .search-form button {
-                grid-column: 1 / -1;
-            }
-
-            .landing-content {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 700px) {
-            .landing {
-                padding: 12px;
-            }
-
-            .landing-topbar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .landing-nav {
-                justify-content: center;
-            }
-
-            .search-form {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </head>
 <body>
 <section class="landing">
     <div class="landing-shell">
         <header class="landing-topbar">
-            <a href="{% url 'accueil' %}" class="landing-brand">Logement</a>
+            <a class="landing-brand" href="{% url 'accueil' %}">Logement</a>
             <nav class="landing-nav">
-                <a href="{% url 'accueil' %}">Accueil</a>
-                <a href="{% url 'feed' %}">Annonces</a>
+                <a href="{% url 'feed' %}">Fil public</a>
                 <a href="{% url 'login' %}" class="cta-login">Connexion</a>
-                <a href="{% url 'register' %}" class="cta-register">Creer un compte</a>
+                <a href="{% url 'register' %}" class="cta-register">Inscription</a>
             </nav>
         </header>
 
         <section class="landing-hero">
-            <h1>Trouvez votre prochain appartement</h1>
-            <p>Recherchez rapidement selon le quartier, le type de logement et votre budget mensuel.</p>
+            <h1>Le reseau immobilier nouvelle generation</h1>
+            <p>Une interface moderne inspiree des standards pro pour trouver, publier et converser sans friction.</p>
             <div class="search-strip">
-                <form class="search-form" action="{% url 'feed' %}" method="get">
-                    <input type="text" name="quartier" placeholder="Ville ou quartier (Akwa, Bastos...)" aria-label="Quartier">
-                    <select name="type" aria-label="Type de logement">
+                <form class="search-form" method="get" action="{% url 'feed' %}">
+                    <input type="text" name="quartier" placeholder="Ville ou quartier">
+                    <select name="type">
                         <option value="">Type de logement</option>
-                        <option value="studio">Studio</option>
                         <option value="appartement">Appartement</option>
+                        <option value="studio">Studio</option>
                         <option value="maison">Maison</option>
                         <option value="chambre">Chambre</option>
                     </select>
-                    <input type="number" name="prix" placeholder="Prix max (FCFA)" aria-label="Prix max">
-                    <button type="submit">Rechercher</button>
+                    <input type="number" name="prix" placeholder="Budget max FCFA">
+                    <button type="submit">Explorer</button>
                 </form>
             </div>
         </section>
 
-        <section class="landing-content" id="catalog">
-            <aside class="landing-side">
+        <section class="landing-content">
+            <aside class="landing-side stack">
                 <div class="panel">
-                    <p class="panel-title">Biens en vedette</p>
+                    <p class="panel-title">Pourquoi cette plateforme</p>
                     <div class="panel-body">
                         <ul class="quick-list list-clean">
-                            {% for appartement in appartements|slice:":3" %}
-                            <li>
-                                <div>
-                                    <strong>{{ appartement.titre|truncatechars:23 }}</strong>
-                                    <span>{{ appartement.quartier }}</span>
-                                </div>
-                                <span>❤</span>
-                            </li>
-                            {% empty %}
-                            <li><span>Aucun favori pour le moment.</span></li>
-                            {% endfor %}
+                            <li><strong>Feed social</strong> <span>annonces dynamiques</span></li>
+                            <li><strong>Messagerie rapide</strong> <span>discussion instantanee</span></li>
+                            <li><strong>Experience pro</strong> <span>navigation claire</span></li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="panel">
-                    <p class="panel-title">Aperçu du support</p>
+                    <p class="panel-title">Demarrer</p>
                     <div class="panel-body">
-                        <ul class="quick-list list-clean">
-                            <li><span>Connectez-vous pour accéder à vos conversations privées.</span></li>
-                        </ul>
+                        <div class="btn-row">
+                            <a href="{% url 'register' %}" class="link-reset"><button type="button">Creer mon compte</button></a>
+                            <a href="{% url 'login' %}" class="link-reset"><button type="button" class="btn-secondary">Se connecter</button></a>
+                        </div>
                     </div>
                 </div>
             </aside>
 
             <div>
                 <div class="catalog-head">
-                    <h2>Annonces disponibles</h2>
-                    <span class="badge">{{ appartements|length }} biens</span>
+                    <h2>Dernieres annonces visibles</h2>
+                    <span class="badge">En direct</span>
                 </div>
                 <div class="catalog-grid">
                     {% for appartement in appartements %}
                     <article class="catalog-item">
-                        {% if appartement.primary_image_url %}
-                        <img src="{{ appartement.primary_image_url }}" alt="{{ appartement.titre }}">
+                        {% if appartement.photo_url_safe %}
+                        <img src="{{ appartement.photo_url_safe }}" alt="{{ appartement.titre }}">
                         {% else %}
-                        <img src="https://images.unsplash.com/photo-1493666438817-866a91353ca9?auto=format&fit=crop&w=900&q=80" alt="Appartement">
+                        <img src="https://images.unsplash.com/photo-1560185008-a33f4f2f0a0f?auto=format&fit=crop&w=1200&q=80" alt="Visuel logement">
                         {% endif %}
                         <div class="catalog-item-body">
                             <h3>{{ appartement.titre }}</h3>
-                            <p class="meta">📍 {{ appartement.quartier }} · {{ appartement.type_logement|title }}</p>
+                            <p class="meta">{{ appartement.type_logement|title }} · {{ appartement.quartier }}</p>
                             <p class="price">{{ appartement.prix }} FCFA / mois</p>
-                            <p class="desc">{{ appartement.description|truncatewords:12 }}</p>
-                            <a href="{% url 'login' %}">Voir plus</a>
+                            <p class="desc">{{ appartement.description|truncatewords:14 }}</p>
+                            <a href="{% url 'appartement_detail' appartement.id %}">Voir l'annonce</a>
                         </div>
                     </article>
                     {% empty %}
-                    <div class="panel">
-                        <div class="panel-body">
-                            <p class="list-meta">Aucun appartement disponible actuellement.</p>
-                        </div>
+                    <div class="empty-state">
+                        <p>Aucune annonce disponible pour l'instant.</p>
                     </div>
                     {% endfor %}
                 </div>
@@ -390,12 +94,12 @@
         </section>
 
         <footer class="landing-footer">
+            <span>© 2026 Logement</span>
             <div class="landing-footer-links">
-                <a href="{% url 'accueil' %}">Accueil</a>
+                <a href="{% url 'feed' %}">Fil public</a>
                 <a href="{% url 'login' %}">Connexion</a>
                 <a href="{% url 'register' %}">Inscription</a>
             </div>
-            <p>© 2026 Logement. Tous droits reserves.</p>
         </footer>
     </div>
 </section>

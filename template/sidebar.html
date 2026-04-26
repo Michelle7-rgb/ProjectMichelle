@@ -1,41 +1,67 @@
-<aside class="sidebar" id="sidebar">
-    <div class="sidebar-head">
-        <div class="logo">Loge<span>ment</span></div>
-        <p class="tagline">Plateforme immobiliere</p>
-    </div>
+<header class="top-nav" id="sidebar">
+    <div class="top-nav-inner">
+        <div class="brand-block">
+            <a class="logo" href="{% url 'feed' %}">Loge<span>ment</span></a>
+            <p class="tagline">Real estate social platform</p>
+        </div>
 
-    <nav>
-        {% if user.is_authenticated %}
-            {% if user.role == 'PROPRIETAIRE' %}
-        <h4>Propriétaire</h4>
-        <a href="{% url 'feed' %}" data-spa="true">Feed</a>
-        <a href="{% url 'owner_listings' %}" data-spa="true">Mes annonces</a>
-        <a href="{% url 'owner_publish' %}" data-spa="true">Publier</a>
-        <a href="{% url 'messages' %}" data-spa="true">Messages</a>
-
-            {% elif user.role == 'CLIENT' %}
-
-        <h4>Locataire</h4>
-        <a href="{% url 'feed' %}" data-spa="true">Feed</a>
-        <a href="{% url 'tenant_profile' %}" data-spa="true">Profil</a>
-        <a href="{% url 'tenant_favorites' %}" data-spa="true">Favoris</a>
-        <a href="{% url 'messages' %}" data-spa="true">Messages</a>
-
-            {% elif user.role == 'ADMIN' %}
-
-        <h4>Admin</h4>
-        <a href="{% url 'feed' %}" data-spa="true">Feed</a>
-        <a href="{% url 'admin_review' %}" data-spa="true">Annonces en attente</a>
+        <nav class="top-nav-links">
+            {% if user.is_authenticated %}
+                {% if user.role == 'PROPRIETAIRE' %}
+                <a href="{% url 'feed' %}" data-spa="true">Fil d'actualite</a>
+                <a href="{% url 'owner_listings' %}" data-spa="true">Mes annonces</a>
+                <a href="{% url 'owner_publish' %}" data-spa="true">Publier</a>
+                <a href="{% url 'messages' %}" data-spa="true">Conversations</a>
+                <a href="{% url 'logout' %}" class="nav-logout">Se deconnecter</a>
+                {% elif user.role == 'CLIENT' %}
+                <a href="{% url 'feed' %}" data-spa="true">Fil d'actualite</a>
+                <a href="{% url 'tenant_profile' %}" data-spa="true">Mon profil</a>
+                <a href="{% url 'tenant_favorites' %}" data-spa="true">Favoris</a>
+                <a href="{% url 'messages' %}" data-spa="true">Conversations</a>
+                <a href="{% url 'logout' %}" class="nav-logout">Se deconnecter</a>
+                {% elif user.role == 'ADMIN' %}
+                <a href="{% url 'feed' %}" data-spa="true">Fil d'actualite</a>
+                <a href="{% url 'admin_review' %}" data-spa="true">Moderation</a>
+                <a href="{% url 'logout' %}" class="nav-logout">Se deconnecter</a>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'accueil' %}">Accueil</a>
+                <a href="{% url 'login' %}">Connexion</a>
+                <a href="{% url 'register' %}">Inscription</a>
             {% endif %}
-        {% else %}
-        <h4>Compte</h4>
-        <a href="{% url 'login' %}">Connexion</a>
-        <a href="{% url 'register' %}">Inscription</a>
-        {% endif %}
-    </nav>
+        </nav>
 
-    <div class="sidebar-footer">
-        <button id="themeToggle" type="button" aria-label="Basculer le thème">🌙</button>
-        <button id="collapseBtn" type="button" aria-label="Réduire le menu">☰</button>
+        <div class="top-nav-utilities">
+            <button id="themeToggle" class="icon-btn" type="button" aria-label="Basculer le theme">☀</button>
+            <button id="mobileMenuBtn" class="icon-btn mobile-menu-btn" type="button" aria-label="Ouvrir le menu" aria-expanded="false">☰</button>
+        </div>
     </div>
-</aside>
+
+    <div id="mobileMenuPanel" class="mobile-menu-panel" aria-hidden="true">
+        <nav>
+            {% if user.is_authenticated %}
+                {% if user.role == 'PROPRIETAIRE' %}
+                <a href="{% url 'feed' %}" data-spa="true">Fil d'actualite</a>
+                <a href="{% url 'owner_listings' %}" data-spa="true">Mes annonces</a>
+                <a href="{% url 'owner_publish' %}" data-spa="true">Publier</a>
+                <a href="{% url 'messages' %}" data-spa="true">Conversations</a>
+                <a href="{% url 'logout' %}" class="nav-logout">Se deconnecter</a>
+                {% elif user.role == 'CLIENT' %}
+                <a href="{% url 'feed' %}" data-spa="true">Fil d'actualite</a>
+                <a href="{% url 'tenant_profile' %}" data-spa="true">Mon profil</a>
+                <a href="{% url 'tenant_favorites' %}" data-spa="true">Favoris</a>
+                <a href="{% url 'messages' %}" data-spa="true">Conversations</a>
+                <a href="{% url 'logout' %}" class="nav-logout">Se deconnecter</a>
+                {% elif user.role == 'ADMIN' %}
+                <a href="{% url 'feed' %}" data-spa="true">Fil d'actualite</a>
+                <a href="{% url 'admin_review' %}" data-spa="true">Moderation</a>
+                <a href="{% url 'logout' %}" class="nav-logout">Se deconnecter</a>
+                {% endif %}
+            {% else %}
+                <a href="{% url 'accueil' %}">Accueil</a>
+                <a href="{% url 'login' %}">Connexion</a>
+                <a href="{% url 'register' %}">Inscription</a>
+            {% endif %}
+        </nav>
+    </div>
+</header>
