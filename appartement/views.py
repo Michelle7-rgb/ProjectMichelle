@@ -7,6 +7,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.db.models import Q, Max
 
 from favoris.models import Favoris
@@ -164,7 +165,7 @@ def feed(request):
     appartements = Appartement.objects.filter(
         disponible=True,
         moderation_status='APPROVED',
-    ).select_related('proprietaire').prefetch_related('images')
+    ).select_related('proprietaire').prefetch_related('images').order_by('-date_publication')
 
     quartier = request.GET.get('quartier')
     type_logement = request.GET.get('type')
@@ -196,8 +197,20 @@ def feed(request):
             .order_by('-date_envoi')[:3]
         )
 
+    paginator = Paginator(appartements, 15)
+    page_obj = paginator.get_page(request.GET.get('page'))
+
+    query_params = request.GET.copy()
+    query_params.pop('page', None)
+    pagination_query = query_params.urlencode()
+    pagination_prefix = f"{pagination_query}&" if pagination_query else ""
+
     return render(request, 'feed.html', {
-        'appartements': appartements,
+        'appartements': page_obj.object_list,
+        'page_obj': page_obj,
+        'paginator': paginator,
+        'visible_pages': paginator.get_elided_page_range(page_obj.number, on_each_side=1, on_ends=1),
+        'pagination_prefix': pagination_prefix,
         'mes_favoris': mes_favoris,
         'recent_messages': recent_messages,
     })

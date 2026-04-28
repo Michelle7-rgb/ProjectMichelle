@@ -1,18 +1,36 @@
 {% extends 'base.html' %}
-{% block page_title %}Messagerie - IMMOPro{% endblock %}
+{% block page_title %}Messagerie - Logement{% endblock %}
 {% block content %}
 <section class="view">
     <header class="view-head">
         <div>
-            <h2>Messagerie</h2>
-            <p>Vue d'ensemble de vos échanges, dans un style aligné avec l'accueil.</p>
+            <h2>Messagerie instantanee</h2>
+            <p>Vue d'ensemble des echanges proprietaires et locataires dans une UI professionnelle.</p>
         </div>
         <span class="badge">{{ conversations|length }} conversations</span>
     </header>
 
+    <div class="cards">
+        <article class="card">
+            <p class="card-label">Conversations actives</p>
+            <p class="card-value">{{ conversations|length }}</p>
+            <p class="card-trend">Tri par recence</p>
+        </article>
+        <article class="card">
+            <p class="card-label">Mode reponse rapide</p>
+            <p class="card-value">ON</p>
+            <p class="card-trend">Chips d'intention disponibles</p>
+        </article>
+        <article class="card">
+            <p class="card-label">Canal prioritaire</p>
+            <p class="card-value">Logement</p>
+            <p class="card-trend">Conversations qualifiees</p>
+        </article>
+    </div>
+
     <div class="messages-shell">
         <aside class="panel">
-            <p class="panel-title">Conversations récentes</p>
+            <p class="panel-title">Conversations recentes</p>
             <div class="panel-body thread-list">
                 {% for conversation in conversations %}
                 <a class="thread-item" href="{% url 'voir_conversation' conversation.id %}">
@@ -28,23 +46,22 @@
             </div>
         </aside>
 
-        <article class="panel">
-            <p class="panel-title">Aperçu rapide</p>
-            <div class="panel-body">
-                <div class="cards" style="margin-bottom: 0;">
-                    <article class="card">
-                        <p class="card-label">Conversations actives</p>
-                        <p class="card-value">{{ conversations|length }}</p>
-                        <p class="card-trend">Fils accessibles</p>
-                    </article>
-                    <article class="card">
-                        <p class="card-label">Messages envoyés</p>
-                        <p class="card-value">{{ user.message_set.count }}</p>
-                        <p class="card-trend">Historique personnel</p>
-                    </article>
+        <article class="chat-thread">
+            <header class="chat-thread-head">
+                <h3>Apercu conversationnel</h3>
+                <p>Entrez dans un fil pour repondre en direct.</p>
+            </header>
+            <div class="chat-stream">
+                <div class="empty-state">
+                    <p>Votre boite est prete.</p>
+                    <p>Ouvrez un bien puis cliquez sur Contacter le proprietaire pour demarrer.</p>
                 </div>
-                <div class="empty-state" style="margin-top: 12px;">
-                    <p>Ouvrez une conversation à gauche pour répondre rapidement.</p>
+            </div>
+            <div class="chat-compose">
+                <div class="quick-replies">
+                    <span class="quick-reply">Je suis interesse par ce bien</span>
+                    <span class="quick-reply">Quand est la prochaine visite ?</span>
+                    <span class="quick-reply">Merci, je vous recontacte rapidement</span>
                 </div>
             </div>
         </article>

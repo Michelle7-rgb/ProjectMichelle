@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
-{% block page_title %}Conversation - IMMOPro{% endblock %}
+{% block page_title %}Conversation - Logement{% endblock %}
 {% block content %}
 <section class="view">
     <header class="view-head">
         <div>
-            <h2>Conversation</h2>
-            <p>Échange en direct autour de {{ conversation.logement.titre }}.</p>
+            <h2>Conversation active</h2>
+            <p>Echange direct autour de {{ conversation.logement.titre }}.</p>
         </div>
-        <span class="badge">En cours</span>
+        <span class="badge">Canal securise</span>
     </header>
 
     <div class="messages-shell">
@@ -17,17 +17,28 @@
                 <div class="panel-body">
                     <div class="info-pills">
                         <span class="info-pill">Locataire: {{ conversation.locataire.username }}</span>
-                        <span class="info-pill">Proprio: {{ conversation.proprietaire.username }}</span>
+                        <span class="info-pill">Proprietaire: {{ conversation.proprietaire.username }}</span>
+                        <span class="info-pill">Annonce: {{ conversation.logement.type_logement|title }}</span>
                     </div>
                 </div>
             </div>
 
             <div class="panel">
-                <p class="panel-title">Bien concerné</p>
+                <p class="panel-title">Particularite UX</p>
                 <div class="panel-body">
-                    <p class="thread-title">{{ conversation.logement.titre }}</p>
-                    <p class="thread-meta">Consultez l'annonce liée pour revoir les détails.</p>
-                    <div class="btn-row" style="margin-top: 10px;">
+                    <p class="list-meta">Mode "Intention rapide": choisissez une suggestion pour accelerer la discussion.</p>
+                    <div class="quick-replies" style="margin-top: 8px;">
+                        <span class="quick-reply">Je confirme ma visite</span>
+                        <span class="quick-reply">Merci pour les details</span>
+                        <span class="quick-reply">Je veux negocier le prix</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <p class="panel-title">Actions</p>
+                <div class="panel-body">
+                    <div class="btn-row">
                         <a href="{% url 'appartement_detail' conversation.logement.id %}" class="link-reset"><button type="button" class="btn-secondary">Voir l'annonce</button></a>
                         <a href="{% url 'liste_conversations' %}" class="link-reset"><button type="button" class="btn-secondary">Retour aux fils</button></a>
                     </div>
@@ -51,7 +62,7 @@
                 {% empty %}
                 <div class="empty-state">
                     <p>Aucun message pour l'instant.</p>
-                    <p>Soyez le premier à envoyer un message.</p>
+                    <p>Demarrez la conversation en envoyant votre premier message.</p>
                 </div>
                 {% endfor %}
             </div>
@@ -61,7 +72,7 @@
                     {% csrf_token %}
                     <div class="field">
                         <label for="contenu">Votre message</label>
-                        <textarea id="contenu" name="contenu" placeholder="Écrire un message..." required></textarea>
+                        <textarea id="contenu" name="contenu" placeholder="Ecrire un message..." required></textarea>
                     </div>
                     <div class="btn-row">
                         <button type="submit">Envoyer</button>

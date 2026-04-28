@@ -5,148 +5,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription - Logement</title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Sora:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'app.css' %}">
-    <style>
-        .auth-page {
-            min-height: 100vh;
-            display: grid;
-            place-items: center;
-            padding: 18px;
-            background:
-                linear-gradient(135deg, rgba(37, 63, 116, 0.9), rgba(37, 63, 116, 0.68)),
-                url('https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
-        }
-
-        .auth-card {
-            width: min(500px, 100%);
-            border-radius: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.28);
-            background: rgba(251, 253, 255, 0.96);
-            box-shadow: 0 24px 42px rgba(9, 18, 39, 0.32);
-            overflow: hidden;
-        }
-
-        .auth-card-head {
-            padding: 20px 22px 8px;
-        }
-
-        .auth-card-head h1 {
-            color: var(--brand-navy-deep);
-            font-size: 1.75rem;
-            margin-bottom: 6px;
-        }
-
-        .auth-card-head p {
-            color: var(--text-muted);
-            font-size: 0.92rem;
-        }
-
-        .auth-form {
-            padding: 14px 22px 20px;
-            display: grid;
-            gap: 12px;
-        }
-
-        .auth-form label {
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-bottom: 4px;
-            display: inline-block;
-        }
-
-        .auth-form ul {
-            margin: 6px 0 0;
-            padding-left: 16px;
-            color: var(--danger);
-            font-size: 0.8rem;
-        }
-
-        .auth-role {
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 10px;
-            background: #fff;
-        }
-
-        .auth-role label {
-            margin-right: 12px;
-            margin-bottom: 0;
-            color: var(--text);
-            font-weight: 500;
-        }
-
-        .auth-footer {
-            padding: 0 22px 20px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .auth-footer a {
-            color: var(--brand-navy);
-            text-decoration: none;
-            font-weight: 700;
-        }
-
-        .auth-error {
-            margin: 0 22px;
-            border-radius: 10px;
-            padding: 9px 10px;
-            font-size: 0.84rem;
-            background: rgba(192, 52, 58, 0.1);
-            color: var(--danger);
-            border: 1px solid rgba(192, 52, 58, 0.2);
-        }
-
-        .auth-back {
-            padding: 0 22px 16px;
-        }
-
-        .auth-back a {
-            text-decoration: none;
-            color: var(--text-muted);
-            font-size: 0.84rem;
-        }
-    </style>
 </head>
 <body>
 <section class="auth-page">
     <article class="auth-card">
         <header class="auth-card-head">
             <h1>Creer un compte</h1>
-            <p>Inscrivez-vous pour publier, filtrer et contacter rapidement.</p>
+            <p>Inscrivez-vous pour publier, filtrer et negocier en temps reel.</p>
         </header>
 
         {% if form.non_field_errors %}
-        <div class="auth-error">
-            {{ form.non_field_errors }}
-        </div>
+        <div class="auth-error">{{ form.non_field_errors }}</div>
         {% endif %}
 
         <form method="post" class="auth-form">
             {% csrf_token %}
             {% for field in form %}
-                <div>
-                    {{ field.label_tag }}
-                    {% if field.name == 'role' %}
-                        <div class="auth-role">{{ field }}</div>
-                    {% else %}
-                        {{ field }}
-                    {% endif %}
-                    {% if field.errors %}
-                        {{ field.errors }}
-                    {% endif %}
-                </div>
+            <div>
+                {{ field.label_tag }}
+                {% if field.name == 'role' %}
+                    <div class="auth-role">{{ field }}</div>
+                {% else %}
+                    {{ field }}
+                {% endif %}
+                {% if field.errors %}
+                    {{ field.errors }}
+                {% endif %}
+            </div>
             {% endfor %}
             <button type="submit">S'inscrire</button>
         </form>
 
-        <p class="auth-footer">
-            Deja un compte ? <a href="{% url 'login' %}">Se connecter</a>
-        </p>
-        <p class="auth-back">
-            <a href="{% url 'accueil' %}">Retour a l'accueil</a>
-        </p>
+        <p class="auth-footer">Deja un compte ? <a href="{% url 'login' %}">Se connecter</a></p>
+        <p class="auth-back"><a href="{% url 'accueil' %}">Retour a l'accueil</a></p>
     </article>
 </section>
 </body>

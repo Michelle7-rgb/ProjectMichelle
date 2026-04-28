@@ -1,10 +1,7 @@
 const main = document.getElementById("mainContent");
 const themeToggle = document.getElementById("themeToggle");
-const collapseBtn = document.getElementById("collapseBtn");
 const mobileMenuBtn = document.getElementById("mobileMenuBtn");
-const sidebarBackdrop = document.getElementById("sidebarBackdrop");
-const sidebar = document.getElementById("sidebar");
-const navLinks = document.querySelectorAll("nav a[data-spa='true']");
+const mobileMenuPanel = document.getElementById("mobileMenuPanel");
 
 function safeStorageGet(key) {
     try {
@@ -22,19 +19,41 @@ function safeStorageSet(key, value) {
     }
 }
 
-function isMobile() {
-    return window.matchMedia("(max-width: 900px)").matches;
+function getSpaLinks() {
+    return document.querySelectorAll("a[data-spa='true']");
 }
 
 function setMobileMenuState(isOpen) {
-    if (!sidebar || !mobileMenuBtn) {
+    if (!mobileMenuBtn || !mobileMenuPanel) {
         return;
     }
 
-    document.body.classList.toggle("sidebar-open", isOpen);
-    sidebar.classList.toggle("mobile-open", isOpen);
+    document.body.classList.toggle("mobile-menu-open", isOpen);
     mobileMenuBtn.textContent = isOpen ? "✕" : "☰";
     mobileMenuBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    mobileMenuPanel.setAttribute("aria-hidden", isOpen ? "false" : "true");
+}
+
+function bindSpaLinks() {
+    const links = getSpaLinks();
+    links.forEach((link) => {
+        link.addEventListener("click", (event) => {
+            event.preventDefault();
+            loadPage(link.href, true);
+            setMobileMenuState(false);
+        });
+    });
+}
+
+function setActiveLink(pathname) {
+    getSpaLinks().forEach((link) => {
+        try {
+            const linkPath = new URL(link.href, window.location.origin).pathname;
+            link.classList.toggle("active", linkPath === pathname);
+        } catch {
+            link.classList.remove("active");
+        }
+    });
 }
 
 if (safeStorageGet("theme") === "dark") {
@@ -42,51 +61,24 @@ if (safeStorageGet("theme") === "dark") {
 }
 
 if (themeToggle) {
-    themeToggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+    themeToggle.textContent = document.body.classList.contains("dark") ? "☀" : "◐";
     themeToggle.addEventListener("click", () => {
         document.body.classList.toggle("dark");
-        safeStorageSet(
-            "theme",
-            document.body.classList.contains("dark") ? "dark" : "light"
-        );
-        themeToggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
-    });
-}
-
-if (collapseBtn && sidebar) {
-    collapseBtn.addEventListener("click", () => {
-        if (isMobile()) {
-            setMobileMenuState(!sidebar.classList.contains("mobile-open"));
-            return;
-        }
-
-        sidebar.classList.toggle("collapsed");
+        safeStorageSet("theme", document.body.classList.contains("dark") ? "dark" : "light");
+        themeToggle.textContent = document.body.classList.contains("dark") ? "☀" : "◐";
     });
 }
 
 if (mobileMenuBtn) {
     mobileMenuBtn.addEventListener("click", () => {
-        if (!sidebar) {
-            return;
-        }
-
-        setMobileMenuState(!sidebar.classList.contains("mobile-open"));
+        setMobileMenuState(!document.body.classList.contains("mobile-menu-open"));
     });
 }
 
-if (sidebarBackdrop) {
-    sidebarBackdrop.addEventListener("click", () => {
-        setMobileMenuState(false);
-    });
-}
-
-function setActiveLink(pathname) {
-    navLinks.forEach((link) => {
-        try {
-            const linkPath = new URL(link.href, window.location.origin).pathname;
-            link.classList.toggle("active", linkPath === pathname);
-        } catch {
-            link.classList.remove("active");
+if (mobileMenuPanel) {
+    mobileMenuPanel.addEventListener("click", (event) => {
+        if (event.target instanceof HTMLAnchorElement) {
+            setMobileMenuState(false);
         }
     });
 }
@@ -121,6 +113,7 @@ async function loadPage(url, push = true) {
         main.innerHTML = incomingMain.innerHTML;
         const pathname = new URL(url, window.location.origin).pathname;
         setActiveLink(pathname);
+        bindSpaLinks();
 
         if (push) {
             window.history.pushState({}, "", url);
@@ -130,30 +123,15 @@ async function loadPage(url, push = true) {
     }
 }
 
-navLinks.forEach((link) => {
-    link.addEventListener("click", (event) => {
-        event.preventDefault();
-        loadPage(link.href, true);
-        if (isMobile()) {
-            setMobileMenuState(false);
-        }
-    });
-});
-
 window.addEventListener("popstate", () => {
     loadPage(window.location.href, false);
 });
 
-window.addEventListener("resize", () => {
-    if (!isMobile()) {
-        setMobileMenuState(false);
-    }
-});
-
 document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && isMobile()) {
+    if (event.key === "Escape") {
         setMobileMenuState(false);
     }
 });
 
+bindSpaLinks();
 setActiveLink(window.location.pathname);
